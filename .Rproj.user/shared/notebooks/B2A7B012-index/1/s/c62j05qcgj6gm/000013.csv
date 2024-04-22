@@ -1,7 +1,0 @@
-"0",""
-"0","ROC_BIC_model_in_testdata <- roc(response = diabetes_test$Outcome, predictor = predicted_prob_BIC)"
-"2","Setting levels: control = 0, case = 1
-"
-"2","Setting direction: controls < cases
-"
-"0","plot(ROC_BIC_model_in_testdata, print.auc = TRUE, print.auc.x = 0.5, print.auc.y = 0.40, col = ""springgreen"", lwd = 3, lty = 2, add = TRUE)"

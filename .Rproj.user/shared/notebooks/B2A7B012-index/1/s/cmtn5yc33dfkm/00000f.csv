@@ -1,6 +1,0 @@
-"0",""
-"0","model_names <- c(""Full Model"", ""AIC-selected Model"", ""BIC-selected Model"", ""LASSO Model"")"
-"0","AUC_values <- c(ROC_full_log$auc, ROC_AIC_log$auc, ROC_BIC_log$auc, as.double(AUC_lasso))"
-"0","comparison_table <- data.frame(Model = model_names, AUC = AUC_values)"
-"0",""
-"0","comparison_table"

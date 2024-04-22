@@ -15,7 +15,6 @@ format:
     code-block-border-left: "#31BAE9"
     toc: true
     toc-depth: 3
-    number-sections: true
 ---
 
 ## Introduction:
@@ -83,37 +82,11 @@ From some basic exploratory data analysis we see the dataset contains around **o
 
 Before delving into specifics, it's essential to examine the overall distribution of outcomes across variables. This exploration provides insight into how outcomes vary in response to changes in each variable.
 
-#### Distribution of predictors:
-
-The density plots for the variables in this dataset illustrate the distribution of each variable's values. This visualization helps in understanding the spread, central tendency, and shape of the data for variables such as Pregnancies, Glucose, BloodPressure, Skin Thickness, Insulin, BMI, DiabetesPedigreeFunction, and Age. These plots offer insights into the prevalence and distribution of key factors associated with diabetes diagnosis in the female subjects aged 21 and above.
-
-```{r}
-data_long <- diabetes_clean %>%
-  pivot_longer(cols = -Outcome, names_to = "Variable", values_to = "Value")
-
-
-options(repr.plot.width = 15, repr.plot.height = 10)
-density_plot <- ggplot(data_long, aes(x = Value, fill = Variable)) +
-  geom_density(alpha = 0.5) +
-  facet_wrap(~ Variable, scales = "free", nrow = 2, ncol = 4) +
-  theme_minimal() +
-  ggtitle("Density Plots of Factors") +
-  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 25),
-        text = element_text(size = 15)) +
-  guides(fill = "none")
-
-density_plot
-```
-
-#### Understanding the distributions:
-
-Age skews right, indicating a younger population. Blood Pressure and BMI are normally distributed, representing the population. DiabetesPedigreeFunction and Insulin skew right, with low values prevalent; Glucose is normally distributed; Pregnancies skew right, suggesting fewer are common; Skin Thickness is nearly normal, peaking at lower values. These patterns aid in understanding population demographics and physiological factors influencing diabetes prediction.
-
 #### Explore the multicollinearity:
 
 According to regression assumptions, multicollinearity among explanatory variables should be avoided. If a multicollinearity problem exists in the dataset, the standard errors of estimated coefficients will be inflated, and coefficient estimates will be unstable, making it difficult to determine variable significance. Additionally, the interpretation of coefficients will be misleading. We can explore the correlation matrix for better insights.
 
-```{r}
+```{r,fig.dim = c(15, 15)}
 # getting correlation values between variables
 corr_matrix <- diabetes_clean %>%
   dplyr::select(- Outcome) %>%
@@ -152,17 +125,79 @@ corr_matrix %>%
     labs(title = "Correlation Matrix")
 ```
 
-#### Understanding variables which show correlation:
+##### Understanding variables which show correlation:
 
 In the dataset analysis, several pairs of variables show significant correlations. Notably, `Glucose` and `Insulin` correlate at **0.58**, indicating a regulatory response to blood sugar levels. `Age` and `Pregnancies` exhibit a correlation of **0.68**, reflecting reproductive aging. `BMI` and `SkinThickness` correlate at **0.66**, suggesting a link between body fat and skin thickness. `BloodPressure` and `BMI` show a correlation of **0.30**, indicating a connection between hypertension and obesity. Lastly, `Glucose` and `Age` correlate at **0.34**, potentially indicating age-related changes in glucose metabolism and diabetes risk. The above all shows the potential issue of multicollinearity in the dataset.
 
 Conversely, the correlation between other variables appears to be within acceptable ranges, suggesting that they are not significantly affected by multicollinearity. Therefore, we need to addresse multicollinearity issue by some techniques such as variable selection or regularization methods,improving the robustness of the regression model.
 
+#### Distribution of predictors:
+
+The density plots for the variables in this dataset illustrate the distribution of each variable's values. This visualization helps in understanding the spread, central tendency, and shape of the data for variables such as Pregnancies, Glucose, BloodPressure, Skin Thickness, Insulin, BMI, DiabetesPedigreeFunction, and Age. These plots offer insights into the prevalence and distribution of key factors associated with diabetes diagnosis in the female subjects aged 21 and above.
+
+```{r, fig.dim = c(15, 10)}
+# getting correlation values between variables
+corr_matrix <- diabetes_clean %>%
+  dplyr::select(- Outcome) %>%
+  cor() %>%
+  as.data.frame() %>%
+  rownames_to_column("var1") %>%
+  pivot_longer(-var1, names_to = "var2", values_to = "corr")
+
+# plotting a correlation matrix
+options(repr.plot.width = 15, repr.plot.height = 15)
+corr_matrix %>%
+  ggplot(aes(var1, var2)) +
+  geom_tile(aes(fill = corr), color = "white") +
+  scale_fill_distiller("Correlation Coefficient \n",
+    palette =  "Spectral",
+    direction = 1, limits = c(-1,1)
+  ) +
+    theme(
+        axis.text.x = element_text(
+          angle = 45, vjust = 1,
+          size = 18, hjust = 1
+        ),
+        axis.text.y = element_text(
+          vjust = 1,
+          size = 18, hjust = 1
+        ),
+        title = element_text(size = 20, face = "bold"),
+        legend.title = element_text(size = 18, face = "bold"),
+        legend.text = element_text(size = 20),
+        legend.key.size = unit(2, "cm"),
+        text = element_text(size = 20),
+        plot.title = element_text(hjust = 0.5, face = "bold", size = 25)
+      ) +
+      coord_fixed() +
+      geom_text(aes(var1, var2, label = round(corr, 2)), color = "black", size = 6) +
+    labs(title = "Correlation Matrix")
+data_long <- diabetes_clean %>%
+  pivot_longer(cols = -Outcome, names_to = "Variable", values_to = "Value")
+
+
+options(repr.plot.width = 15, repr.plot.height = 10)
+density_plot <- ggplot(data_long, aes(x = Value, fill = Variable)) +
+  geom_density(alpha = 0.5) +
+  facet_wrap(~ Variable, scales = "free", nrow = 2, ncol = 4) +
+  theme_minimal() +
+  ggtitle("Density Plots of Factors") +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 25),
+        text = element_text(size = 15)) +
+  guides(fill = "none")
+
+density_plot
+```
+
+##### Understanding the distributions:
+
+Age skews right, indicating a younger population. Blood Pressure and BMI are normally distributed, representing the population. DiabetesPedigreeFunction and Insulin skew right, with low values prevalent; Glucose is normally distributed; Pregnancies skew right, suggesting fewer are common; Skin Thickness is nearly normal, peaking at lower values. These patterns aid in understanding population demographics and physiological factors influencing diabetes prediction.
+
 #### Observing the relationship between each predictor variable and the outcome:
 
 We aim to gain insights into the relationship between each explanatory variable and the response variable before conducting regression analysis. Given the binary nature of the response variable, utilizing boxplots to visualize the relationship between each explanatory variable and the response variable offers a convenient approach.
 
-```{r}
+```{r,fig.dim = c(20, 15)}
 function_plot <- ggplot(data = diabetes_clean, aes(x = factor(Outcome), y =DiabetesPedigreeFunction, fill = factor(Outcome))) +
   geom_boxplot(colour = "red") +
   labs(title = "DiabetesPedigreeFunction vs. Outcome",
@@ -281,7 +316,7 @@ options(repr.plot.width = 20, repr.plot.height = 15)
 plot_grid(ggdraw() + draw_label("Diabetes Outcome Across Key Factors", fontface='bold', size = 25), combined_plot, ncol=1, rel_heights=c(0.1, 1))
 ```
 
-#### Conclusion from boxplots:
+##### Conclusion from boxplots:
 
 -   From the eight boxplots above, a notable disparity emerges in the mean glucose levels between individuals with and without diabetes. Specifically, the mean glucose level appears markedly higher among those with diabetes compared to those without, suggesting a positive association between glucose level and diabetes. Given this observation, further investigation into the relationship between glucose level and diabetes outcome is warranted.
 
@@ -452,7 +487,7 @@ diabetes_LASSO_1se_AUC <- glmnet(
 coef(diabetes_LASSO_1se_AUC)
 ```
 
-```{r}
+```{r,fig.dim = c(15, 10)}
 
 ROC_lasso <-
     roc(
@@ -478,9 +513,10 @@ comparison_table
 
 After comparing the AUC values for the four candidate models, we observed that the AIC-selected model had the best prediction performance on the training dataset. Consequently, we determined to adopt the AIC-selected model as our final predictive model. Next, we will assess the out-of-sample performance of our final model by applying it to the testing dataset, thereby generating the ROC curve and computing the corresponding AUC value.
 
-```{r}
+```{r, fig.dim = c(15, 10)}
 
 options(repr.plot.width = 15, repr.plot.height = 10)
+
 model_X_test <- diabetes_test[, -which(names(diabetes_test) == "Outcome")]
 
 predicted_prob_AIC <- predict(AIC_model, newdata = model_X_test, type = "response")
@@ -510,9 +546,19 @@ Based on our analysis, the AIC-selected model has the best prediction performanc
 
 Therefore, we have concluded that the AIC-selected model aligns most effectively with our project's objective of establishing a predictive model for determining the probabilty of an individual having diabetes. Below is a summary of the selected model:
 
-$$ \log\left(\frac{p_i}{1-p_i}\right) = -10.620170 + 1.146492 \space \text{DiabetesPedigreeFunction} + 0.040539 \space \text{Age} + 0.078362 \space \text{BMI} + 0.042436 \space \text{Glucose}$$ where $p_i$ is the probability of the \$ i\_{\text{th}}\$ individual having diabetes.
+$$
+\begin{align*}
+\log\left(\frac{p_i}{1-p_i}\right) &= -10.620170 +1.146492 \cdot \text{DiabetesPedigreeFunction} + 0.040539 \cdot \text{Age} \\
+&\quad + 0.078362 \cdot \text{BMI} + 0.042436 \cdot \text{Glucose}
+\end{align*}
+$$
 
-Given an individual's diabetes percentage, age, BMI, and glucose level, this model can be used to predictive the probability of diabetes as $$p_{i} = \frac{1}{1+e^{-(-10.620170 + 1.146492 \times \text{DiabetesPedigreeFunction} + 0.040539 \times \text{Age} + 0.078362 \times \text{BMI} + 0.042436 \times \text{Glucose})}}$$
+
+where $p_i$ is the probability of the $i{\text{th}}$ individual having diabetes.
+
+Given an individual's diabetes percentage, age, BMI, and glucose level, this model can be used to predictive the probability of diabetes as
+
+$$p_{i} = \frac{1}{1+e^{-(-10.620170 + 1.146492 \times \text{DiabetesPedigreeFunction} + 0.040539 \times \text{Age} + 0.078362 \times \text{BMI} + 0.042436 \times \text{Glucose})}}$$
 
 ## Discussion:
 

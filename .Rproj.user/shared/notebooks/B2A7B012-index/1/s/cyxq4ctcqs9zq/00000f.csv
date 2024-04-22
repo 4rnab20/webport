@@ -1,8 +1,0 @@
-"0",""
-"0","diabetes_lambda_1se_AUC_LASSO <- round(diabetes_cv_lambda_LASSO$lambda.1se, 4)"
-"0",""
-"0","diabetes_lambda_1se_AUC_LASSO"
-"1","[1]"
-"1"," 0.0709"
-"1","
-"

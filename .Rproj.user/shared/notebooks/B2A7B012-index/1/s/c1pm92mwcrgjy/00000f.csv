@@ -1,2 +1,0 @@
-"0","diabetes_clean <- diabetes[!(diabetes$Glucose == 0 | diabetes$BloodPressure == 0 | diabetes$SkinThickness == 0 | diabetes$Insulin == 0 | diabetes$BMI == 0 | diabetes$DiabetesPedigreeFunction == 0 | diabetes$Age == 0), ]"
-"0","head(diabetes_clean)"
