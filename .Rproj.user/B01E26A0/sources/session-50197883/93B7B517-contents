@@ -1,0 +1,49 @@
+---
+title: "DB Modeling"
+author: "Arnab Das"
+date: "2024-04-21"
+categories: [R]
+---
+
+```{=html}
+<style>
+    /* Set color for headings */
+    h1, h2, h3, h4, h5, h6 {
+      color: #161a1a;
+    }
+</style>
+```
+
+------------------------------------------------------------------------
+
+## Introduction:
+
+Diabetes is a prevalent chronic metabolic disorder posing significant health and economic burdens globally, particularly with the recent rise in type 2 diabetes cases. Predictive modeling offers a valuable approach for identifying individuals at risk and intervening early. The dataset we analyze in this project exclusively consists of female patients aged 21 years or above, all of whom are of Pima Indian heritage. These demographic constraints ensure a focused examination of diabetes within this specific population subset. Diagnostic measurements crucial for diabetes prediction, including glucose levels, blood pressure, insulin levels, and BMI were collected through medical examinations and tests conducted by healthcare professionals. Our aim is to develop an effective tool for diabetes risk assessment to gain insights into the factors contributing to its onset, ultimately improving health outcomes and quality of life for individuals vulnerable to diabetes.
+
+#### Data Overview:
+
+The dataset originates from the National Institute of Diabetes and Digestive and Kidney Diseases and is utilized to predict the probability of diabetes diagnosis in female subjects aged 21 and above. There are a total of 768 observations and 9 variables in the dataset. The target variable is `Outcome` which indicates the presence of diabetes. The 8 explanatory variables are: `Pregnancies`, `Glucose`, `BloodPressure`, `Skin Thickness`, `Insulin`, `BMI`, `DiabetesPredigreeFunction` and `Age`. Below are the detailed description of each explanatory varibles:
+
+-   `Pregnancies`: Integer variable indicating the number of pregnancies the individual has experienced.
+-   Glucose: Numeric variable representing plasma glucose concentration at 2 hours in an oral glucose tolerance test, measured in mg/dL.
+-   BloodPressure: Numeric variable denoting the diastolic blood pressure, measured in mmHg.
+-   `Skin Thickness`: Numeric variable indicating the thickness of the triceps skin fold, measured in mm.
+-   `Insulin`: Numeric variable representing insulin levels in the bloodstream two hours after a specific event (such as the administration of glucose), measured in micro-units per milliliter of serum.
+-   `BMI`: Numeric variable representing Body Mass Index (BMI), a measure of body fat based on height and weight, measured in kg/m\^2.
+-   `DiabetesPedigreeFunction`: Numeric variable representing a function which scores the likelihood of diabetes based on family history.
+-   `Age`: Integer variable indicating the age of the individual.
+-   `Outcome`: Categorical (binary) variable, where 0 represents absence of diabetes and 1 represents presence of diabetes. This variable is the target variable for prediction.
+
+#### Project Objective:
+
+The primary objective of this project is to develop a predictive model capable for predicting the probability of a subject having diabetes based on their diagnostic measurements. By variable and model selection, we aim to build a **"best"** model for prediction among all candidate models. Through this exploration, we seek to gain insights into the underlying factors contributing to diabetes onset and create a valuable tool for diabetes risk assessment. Further analysis, such as correlation analysis, could contribute to ensuring the reliability and robustness of the observed relationships.
+
+```{library(tidyverse)}
+library(ggplot2)
+library(GGally)
+library(glmnet)
+library(caret)
+library(MASS)
+library(pROC)
+library(cowplot)
+```

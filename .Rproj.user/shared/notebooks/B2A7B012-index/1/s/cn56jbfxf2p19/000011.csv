@@ -1,0 +1,2 @@
+"0","diabetes <- read.csv(""diabetes.csv"")"
+"0","head(diabetes)"

@@ -1,0 +1,26 @@
+{
+  "index.qmd": {
+    "index.html": "fd854bb9"
+  },
+  "about.qmd": {
+    "about.html": "38b7e614"
+  },
+  "posts/post-with-code/index.qmd": {
+    "index.html": "d613c14c"
+  },
+  "posts/welcome/index.qmd": {
+    "index.html": "021fbb3f"
+  },
+  "project.qmd": {
+    "project.html": "0791d5e6"
+  },
+  "posts/post-with-code/ad.ipynb": {
+    "ad.html": "5bc49826"
+  },
+  "posts/post-with-code/stat.ipynb": {
+    "stat.html": "d193fb3f"
+  },
+  "posts/STAT_301_Code_and_Implementation(4).ipynb": {
+    "STAT_301_Code_and_Implementation(4).html": "259d106d"
+  }
+}

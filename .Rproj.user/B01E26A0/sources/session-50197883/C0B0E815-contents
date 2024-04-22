@@ -1,0 +1,8 @@
+/* css styles */
+.important {
+  color: maroon;
+}
+
+.illustration {
+  border: 1px solid rgb(230, 230, 230); 
+}

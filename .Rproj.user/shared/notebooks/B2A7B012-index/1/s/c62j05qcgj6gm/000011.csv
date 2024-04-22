@@ -1,0 +1,7 @@
+"0",""
+"0","ROC_full_model_in_testdata <- roc(response = diabetes_test$Outcome, predictor = predicted_fullmodel)"
+"2","Setting levels: control = 0, case = 1
+"
+"2","Setting direction: controls < cases
+"
+"0","plot(ROC_full_model_in_testdata, print.auc = TRUE, print.auc.x = 0.5, print.auc.y = 0.45, col = ""black"", lwd = 3, lty = 2, add = TRUE)"

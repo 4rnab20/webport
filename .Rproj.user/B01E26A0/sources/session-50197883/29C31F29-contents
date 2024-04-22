@@ -1,0 +1,13 @@
+/*-- scss:defaults --*/
+// Base document colors
+$body-bg: #fff;
+$body-color: #161a1a;
+$headings-color: #161a1a;
+$navbar-bg: #161a1a;
+$navbar-hl:#16c6c6;
+
+// Code blocks
+$code-block-bg-alpha: -.8;
+$code-block-border-left: true;
+$code-block-border-left: #16c6c6;
+$dropdown-bg: #fff;

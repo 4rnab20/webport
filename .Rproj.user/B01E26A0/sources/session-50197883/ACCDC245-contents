@@ -1,0 +1,14 @@
+---
+title: 'Diabetes Prediction Modeling: Exploring Risk Factors'
+jupyter:
+  kernelspec:
+    display_name: R
+    language: R
+    name: ir
+---
+
+## Introduction:
+
+Diabetes is a prevalent chronic metabolic disorder posing significant health and economic burdens globally, particularly with the recent rise in type 2 diabetes cases. Predictive modeling offers a valuable approach for identifying individuals at risk and intervening early. The dataset we analyze in this project exclusively consists of female patients aged 21 years or above, all of whom are of Pima Indian heritage. These demographic constraints ensure a focused examination of diabetes within this specific population subset. Diagnostic measurements crucial for diabetes prediction, including glucose levels, blood pressure, insulin levels, and BMI were collected through medical examinations and tests conducted by healthcare professionals. Our aim is to develop an effective tool for diabetes risk assessment to gain insights into the factors contributing to its onset, ultimately improving health outcomes and quality of life for individuals vulnerable to diabetes.
+
+#### 

@@ -1,0 +1,6 @@
+  /* Change the background color of code blocks for dark theme */
+  pre {
+    background-color: #333; /* Dark gray */
+    color: white; /* White text for contrast */
+  }
+}
