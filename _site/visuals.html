@@ -80,9 +80,9 @@ ul.task-list li input[type="checkbox"] {
     }
 
     const options = {
-      valueNames: ['listing-date','listing-title','listing-author','listing-image','listing-description','listing-categories',{ data: ['index'] },{ data: ['categories'] },{ data: ['listing-date-sort'] },{ data: ['listing-file-modified-sort'] }],
+      valueNames: ['listing-title','listing-author','listing-date','listing-image','listing-description','listing-categories',{ data: ['index'] },{ data: ['categories'] },{ data: ['listing-date-sort'] },{ data: ['listing-file-modified-sort'] }],
       
-      searchColumns: ["listing-date","listing-title","listing-author","listing-image","listing-description","listing-categories"],
+      searchColumns: ["listing-title","listing-author","listing-date","listing-image","listing-description","listing-categories"],
     };
 
     window['quarto-listings'] = window['quarto-listings'] || {};
@@ -207,40 +207,35 @@ window.Quarto = {
 
 
 
-<div class="quarto-listing quarto-listing-container-default" id="listing-listing">
-<div class="list quarto-listing-default">
-<div class="quarto-post image-right" data-index="0" data-categories="python" data-listing-date-sort="1704355200000" data-listing-file-modified-sort="1713894970133" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="284">
-<div class="thumbnail">
-<p><a href="./visuals/iu/index.html" class="no-external"></a></p><a href="./visuals/iu/index.html" class="no-external">
-<p class="card-img-top"><img src="visuals\iu\maps_animation.gif"  class="thumbnail-image card-img"/></p>
-</a><p><a href="./visuals/iu/index.html" class="no-external"></a></p>
-</div>
-<div class="body">
-<h3 class="no-anchor listing-title">
-<a href="./visuals/iu/index.html" class="no-external">Country-wise Percentage of Internet Users Globally</a>
-</h3>
-<div class="listing-subtitle">
-<a href="./visuals/iu/index.html" class="no-external"></a>
-</div>
+<div class="quarto-listing quarto-listing-container-grid" id="listing-listing">
+<div class="list grid quarto-listing-cols-1">
+<div class="g-col-1" data-index="0" data-categories="python" data-listing-date-sort="1704355200000" data-listing-file-modified-sort="1713894970133" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="284">
+<a href="./visuals/iu/index.html" class="quarto-grid-link">
+<div class="quarto-grid-item card h-100 card-left">
+<p class="card-img-top"><img src="visuals\iu\maps_animation.gif" style="height: 500px;"  class="thumbnail-image card-img"/></p>
+<div class="card-body post-contents">
+<h5 class="no-anchor card-title listing-title">
+Country-wise Percentage of Internet Users Globally
+</h5>
 <div class="listing-categories">
 <div class="listing-category" onclick="window.quartoListingCategory('python'); return false;">
 python
 </div>
 </div>
-<div class="listing-description">
-<a href="./visuals/iu/index.html" class="no-external">The provided code reads data from the World Bank’s indicator for internet users (% of population), available at World Bank Internet Users Data, and processes it for…<code></code><code></code><code></code></a>
+<div class="card-text listing-description">
+The provided code reads data from the World Bank’s indicator for internet users (% of population), available at World Bank Internet Users Data, and processes it for…<code></code><code></code><code></code>
 </div>
-</div>
-<div class="metadata">
-<a href="./visuals/iu/index.html" class="no-external">
-<div class="listing-date">
-Jan 4, 2024
-</div>
+<div class="card-attribution card-text-small justify">
 <div class="listing-author">
 Arnab Das
 </div>
-</a>
+<div class="listing-date">
+Jan 4, 2024
 </div>
+</div>
+</div>
+</div>
+</a>
 </div>
 </div>
 <div class="listing-no-matching d-none">
