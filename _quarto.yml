@@ -15,8 +15,8 @@ website:
 format:
   html:
     theme: 
-      light: [Cosmo, custom2.scss]
       dark: [Cosmo, custom.scss]
+      light: [Cosmo, custom2.scss]
     css: styles.css
     code-overflow: wrap
 editor: visual

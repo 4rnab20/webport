@@ -87,7 +87,7 @@ Before delving into specifics, it's essential to examine the overall distributio
 
 According to regression assumptions, multicollinearity among explanatory variables should be avoided. If a multicollinearity problem exists in the dataset, the standard errors of estimated coefficients will be inflated, and coefficient estimates will be unstable, making it difficult to determine variable significance. Additionally, the interpretation of coefficients will be misleading. We can explore the correlation matrix for better insights.
 
-```{r,fig.dim = c(15, 15), message=FALSE, warning = FALSE}
+```{r,fig.dim = c(15, 10), message=FALSE, warning = FALSE}
 # getting correlation values between variables
 corr_matrix <- diabetes_clean %>%
   dplyr::select(- Outcome) %>%
@@ -119,8 +119,7 @@ corr_matrix %>%
         legend.text = element_text(size = 20),
         legend.key.size = unit(2, "cm"),
         text = element_text(size = 20),
-        plot.title = element_text(hjust = 0.5, face = "bold", size = 25)
-      ) +
+        plot.title = element_text(hjust = 0.5, face = "bold", size = 25)) +
       coord_fixed() +
       geom_text(aes(var1, var2, label = round(corr, 2)), color = "black", size = 6) +
     labs(title = "Correlation Matrix")
