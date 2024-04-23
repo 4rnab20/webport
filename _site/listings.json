@@ -6,5 +6,11 @@
       "/posts/flagmodel/index.html",
       "/posts/pulsarstars/index.html"
     ]
+  },
+  {
+    "listing": "/visuals.html",
+    "items": [
+      "/visuals/iu/index.html"
+    ]
   }
 ]

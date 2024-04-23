@@ -8,7 +8,7 @@ website:
       - text: Projects
         href: project.qmd
       - text: Visualization 
-        href: empty.qmd
+        href: visuals.qmd
     right:
       - icon: github
         href: https://github.com/4rnab20

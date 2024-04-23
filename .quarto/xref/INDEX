@@ -40,5 +40,11 @@
   },
   "posts/pulsarstars/index.rmarkdown": {
     "index.html": "d25ad749"
+  },
+  "visuals.qmd": {
+    "visuals.html": "e24e65d6"
+  },
+  "visuals/iu/index.ipynb": {
+    "index.html": "cb3b9626"
   }
 }
