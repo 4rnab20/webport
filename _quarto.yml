@@ -7,7 +7,8 @@ website:
     left:
       - text: Projects
         href: project.qmd
-
+      - text: Visualization 
+        href: empty.qmd
     right:
       - icon: github
         href: https://github.com/4rnab20
@@ -18,6 +19,6 @@ format:
       dark: [Cosmo, custom.scss]
       light: [Cosmo, custom2.scss]
     css: styles.css
-    code-overflow: wrap
+    code-overflow: scroll
 editor: visual
 

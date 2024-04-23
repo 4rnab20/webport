@@ -37,6 +37,8 @@ ul.task-list li input[type="checkbox"] {
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="site_libs/quarto-html/anchor.min.js"></script>
 <link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
@@ -78,9 +80,9 @@ ul.task-list li input[type="checkbox"] {
     }
 
     const options = {
-      valueNames: ['listing-date','listing-title','listing-author','listing-image','listing-description',{ data: ['index'] },{ data: ['categories'] },{ data: ['listing-date-sort'] },{ data: ['listing-file-modified-sort'] }],
+      valueNames: ['listing-date','listing-title','listing-author','listing-image','listing-description','listing-categories',{ data: ['index'] },{ data: ['categories'] },{ data: ['listing-date-sort'] },{ data: ['listing-file-modified-sort'] }],
       
-      searchColumns: ["listing-date","listing-title","listing-author","listing-image","listing-description"],
+      searchColumns: ["listing-date","listing-title","listing-author","listing-image","listing-description","listing-categories"],
     };
 
     window['quarto-listings'] = window['quarto-listings'] || {};
@@ -152,6 +154,10 @@ window.Quarto = {
     <a class="nav-link active" href="./project.html" aria-current="page"> 
 <span class="menu-text">Projects</span></a>
   </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./empty.qmd"> 
+<span class="menu-text">Visualization</span></a>
+  </li>  
 </ul>
             <ul class="navbar-nav navbar-nav-scroll ms-auto">
   <li class="nav-item compact">
@@ -170,13 +176,13 @@ window.Quarto = {
 <!-- content -->
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
-    <div class="quarto-title column-page">
+    <div class="quarto-title column-page-left">
       <h1 class="title">Projects</h1>
                       </div>
   </div>
     
   
-  <div class="quarto-title-meta column-page">
+  <div class="quarto-title-meta column-page-left">
 
       
     
@@ -187,11 +193,11 @@ window.Quarto = {
   </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
         
-    </div>
+    <h5 class="quarto-listing-category-title">Categories</h5><div class="quarto-listing-category category-default"><div class="category" data-category="">All <span class="quarto-category-count">(3)</span></div><div class="category" data-category="R">R <span class="quarto-category-count">(2)</span></div><div class="category" data-category="python">python <span class="quarto-category-count">(1)</span></div></div></div>
 <!-- main -->
-<main class="content quarto-banner-title-block column-page" id="quarto-document-content">
+<main class="content quarto-banner-title-block column-page-left" id="quarto-document-content">
 
 
 
@@ -216,6 +222,11 @@ window.Quarto = {
 <div class="listing-subtitle">
 <a href="./posts/diabetes/index.html" class="no-external"></a>
 </div>
+<div class="listing-categories">
+<div class="listing-category" onclick="window.quartoListingCategory('R'); return false;">
+R
+</div>
+</div>
 <div class="listing-description">
 <a href="./posts/diabetes/index.html" class="no-external">Diabetes is a prevalent chronic metabolic disorder posing significant health and economic burdens globally, particularly with the recent rise in type 2 diabetes cases.…</a>
 </div>
@@ -231,7 +242,7 @@ Arnab Das
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="1" data-categories="python" data-listing-date-sort="1683183600000" data-listing-file-modified-sort="1713859063861" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="11" data-listing-word-count-sort="2171">
+<div class="quarto-post image-right" data-index="1" data-categories="python" data-listing-date-sort="1683183600000" data-listing-file-modified-sort="1713860465818" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="11" data-listing-word-count-sort="2171">
 <div class="thumbnail">
 <p><a href="./posts/flagmodel/index.html" class="no-external"></a></p><a href="./posts/flagmodel/index.html" class="no-external">
 <p class="card-img-top"><img src="posts\flagmodel\index_files\figure-html\cell-4-output-1.png"  class="thumbnail-image card-img"/></p>
@@ -239,10 +250,15 @@ Arnab Das
 </div>
 <div class="body">
 <h3 class="no-anchor listing-title">
-<a href="./posts/flagmodel/index.html" class="no-external">Predictive model to flag potential cancellations</a>
+<a href="./posts/flagmodel/index.html" class="no-external">Modeling for flagging potential cancellations</a>
 </h3>
 <div class="listing-subtitle">
 <a href="./posts/flagmodel/index.html" class="no-external"></a>
+</div>
+<div class="listing-categories">
+<div class="listing-category" onclick="window.quartoListingCategory('python'); return false;">
+python
+</div>
 </div>
 <div class="listing-description">
 <a href="./posts/flagmodel/index.html" class="no-external">The behavior of customers and booking options have thoroughly altered by the online hotel reservation channels. A significant number of reservations are canceled always…</a>
@@ -259,7 +275,7 @@ Arnab Das
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="2" data-categories="R" data-listing-date-sort="1619852400000" data-listing-file-modified-sort="1713844008549" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="25" data-listing-word-count-sort="4818">
+<div class="quarto-post image-right" data-index="2" data-categories="R" data-listing-date-sort="1619852400000" data-listing-file-modified-sort="1713860240490" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="25" data-listing-word-count-sort="4818">
 <div class="thumbnail">
 <p><a href="./posts/pulsarstars/index.html" class="no-external"></a></p><a href="./posts/pulsarstars/index.html" class="no-external">
 <p class="card-img-top"><img src="posts\pulsarstars\index_files\figure-html\unnamed-chunk-7-1.png"  class="thumbnail-image card-img"/></p>
@@ -271,6 +287,11 @@ Arnab Das
 </h3>
 <div class="listing-subtitle">
 <a href="./posts/pulsarstars/index.html" class="no-external"></a>
+</div>
+<div class="listing-categories">
+<div class="listing-category" onclick="window.quartoListingCategory('R'); return false;">
+R
+</div>
 </div>
 <div class="listing-description">
 <a href="./posts/pulsarstars/index.html" class="no-external">Neutron stars are high-density celestial bodies caused by a large mass star collapsing on itself due to its own gravity (Goldberger, 2019). Pulsars are a classification of…</a>
