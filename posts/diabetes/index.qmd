@@ -1,0 +1,546 @@
+---
+title: "Diabetes Prediction Modeling"
+author: "Arnab Das"
+date: "2024-04-21"
+categories: [R]
+output:
+  html_document:
+    css: styles.css
+format:
+  html:
+    code-fold: true
+    code-summary: "Show the code"
+    code-tools: true
+    code-block-bg: true
+    code-block-border-left: "#31BAE9"
+    toc: true
+    toc-depth: 3
+---
+
+## Introduction:
+
+Diabetes is a prevalent chronic metabolic disorder posing significant health and economic burdens globally, particularly with the recent rise in type 2 diabetes cases. Predictive modeling offers a valuable approach for identifying individuals at risk and intervening early. The dataset we analyze in this project exclusively consists of female patients aged 21 years or above, all of whom are of Pima Indian heritage. These demographic constraints ensure a focused examination of diabetes within this specific population subset. Diagnostic measurements crucial for diabetes prediction, including glucose levels, blood pressure, insulin levels, and BMI were collected through medical examinations and tests conducted by healthcare professionals. Our aim is to develop an effective tool for diabetes risk assessment to gain insights into the factors contributing to its onset, ultimately improving health outcomes and quality of life for individuals vulnerable to diabetes.
+
+#### Data Overview:
+
+The dataset originates from the National Institute of Diabetes and Digestive and Kidney Diseases and is utilized to predict the probability of diabetes diagnosis in female subjects aged 21 and above. There are a total of 768 observations and 9 variables in the dataset. The target variable is `Outcome` which indicates the presence of diabetes. The 8 explanatory variables are: `Pregnancies`, `Glucose`, `BloodPressure`, `Skin Thickness`, `Insulin`, `BMI`, `DiabetesPredigreeFunction` and `Age`. Below are the detailed description of each explanatory varibles:
+
+-   `Pregnancies`: Integer variable indicating the number of pregnancies the individual has experienced.
+-   `Glucose`: Numeric variable representing plasma glucose concentration at 2 hours in an oral glucose tolerance test, measured in mg/dL.
+-   `BloodPressure`: Numeric variable denoting the diastolic blood pressure, measured in mmHg.
+-   `Skin Thickness`: Numeric variable indicating the thickness of the triceps skin fold, measured in mm.
+-   `Insulin`: Numeric variable representing insulin levels in the bloodstream two hours after a specific event (such as the administration of glucose), measured in micro-units per milliliter of serum.
+-   `BMI`: Numeric variable representing Body Mass Index (BMI), a measure of body fat based on height and weight, measured in kg/m\^2.
+-   `DiabetesPedigreeFunction`: Numeric variable representing a function which scores the likelihood of diabetes based on family history.
+-   `Age`: Integer variable indicating the age of the individual.
+-   `Outcome`: Categorical (binary) variable, where 0 represents absence of diabetes and 1 represents presence of diabetes. This variable is the target variable for prediction.
+
+#### Project Objective:
+
+The primary objective of this project is to develop a predictive model capable for predicting the probability of a subject having diabetes based on their diagnostic measurements. By variable and model selection, we aim to build a **"best"** model for prediction among all candidate models. Through this exploration, we seek to gain insights into the underlying factors contributing to diabetes onset and create a valuable tool for diabetes risk assessment. Further analysis, such as correlation analysis, could contribute to ensuring the reliability and robustness of the observed relationships.
+
+```{r, message=FALSE, warning = FALSE}
+library(tidyverse)
+library(ggplot2)
+library(GGally)
+library(glmnet)
+library(caret)
+library(MASS)
+library(pROC)
+library(cowplot)
+library(knitr)
+```
+
+#### Loading data:
+
+```{r, message=FALSE, warning = FALSE}
+diabetes <- read.csv("diabetes.csv")
+kable(head(diabetes))
+nrow(diabetes)
+```
+
+#### Removing missing values:
+
+Missing values can introduce bias in parameter estimates and reduce their precision. Upon observing that several attributes in our dataset contain missing values, we opted to clean the data by removing these rows.
+
+```{r, message=FALSE, warning = FALSE}
+diabetes_clean <- diabetes[!(diabetes$Glucose == 0 | diabetes$BloodPressure == 0 | diabetes$SkinThickness == 0 | diabetes$Insulin == 0 | diabetes$BMI == 0 | diabetes$DiabetesPedigreeFunction == 0 | diabetes$Age == 0), ]
+kable(head(diabetes_clean))
+nrow(diabetes_clean)
+outcome_counts <- table(diabetes_clean$Outcome)
+print(outcome_counts)
+```
+
+#### Post data-cleaning overview:
+
+The **number of rows** in our dataset after removing the 0 values is **392**. Although the dataset size has decreased, the remaining data still provides sufficient information to explore relationships, trends, and patterns. By excluding rows with unreliable physiological measurements, we ensure the integrity and accuracy of the dataset, allowing for more reliable insights and interpretations from subsequent analyses.
+
+From some basic exploratory data analysis we see the dataset contains around **one-third** **positive (1)** outcomes, and **two-thirds** **negative (0)** outomes, they are generally balanced enough. However, it's important to remain vigilant for potential issues related to class imbalance and to employ appropriate techniques if imbalance becomes problematic during analysis.
+
+## Methods and Results:
+
+### Exploratory Data Analysis (EDA):
+
+Before delving into specifics, it's essential to examine the overall distribution of outcomes across variables. This exploration provides insight into how outcomes vary in response to changes in each variable.
+
+#### Explore the multicollinearity:
+
+According to regression assumptions, multicollinearity among explanatory variables should be avoided. If a multicollinearity problem exists in the dataset, the standard errors of estimated coefficients will be inflated, and coefficient estimates will be unstable, making it difficult to determine variable significance. Additionally, the interpretation of coefficients will be misleading. We can explore the correlation matrix for better insights.
+
+```{r,fig.dim = c(15, 15), message=FALSE, warning = FALSE}
+# getting correlation values between variables
+corr_matrix <- diabetes_clean %>%
+  dplyr::select(- Outcome) %>%
+  cor() %>%
+  as.data.frame() %>%
+  rownames_to_column("var1") %>%
+  pivot_longer(-var1, names_to = "var2", values_to = "corr")
+
+# plotting a correlation matrix
+options(repr.plot.width = 15, repr.plot.height = 15)
+corr_matrix %>%
+  ggplot(aes(var1, var2)) +
+  geom_tile(aes(fill = corr), color = "white") +
+  scale_fill_distiller("Correlation Coefficient \n",
+    palette =  "Spectral",
+    direction = 1, limits = c(-1,1)
+  ) +
+    theme(
+        axis.text.x = element_text(
+          angle = 45, vjust = 1,
+          size = 18, hjust = 1
+        ),
+        axis.text.y = element_text(
+          vjust = 1,
+          size = 18, hjust = 1
+        ),
+        title = element_text(size = 20, face = "bold"),
+        legend.title = element_text(size = 18, face = "bold"),
+        legend.text = element_text(size = 20),
+        legend.key.size = unit(2, "cm"),
+        text = element_text(size = 20),
+        plot.title = element_text(hjust = 0.5, face = "bold", size = 25)
+      ) +
+      coord_fixed() +
+      geom_text(aes(var1, var2, label = round(corr, 2)), color = "black", size = 6) +
+    labs(title = "Correlation Matrix")
+```
+
+##### Understanding variables which show correlation:
+
+In the dataset analysis, several pairs of variables show significant correlations. Notably, `Glucose` and `Insulin` correlate at **0.58**, indicating a regulatory response to blood sugar levels. `Age` and `Pregnancies` exhibit a correlation of **0.68**, reflecting reproductive aging. `BMI` and `SkinThickness` correlate at **0.66**, suggesting a link between body fat and skin thickness. `BloodPressure` and `BMI` show a correlation of **0.30**, indicating a connection between hypertension and obesity. Lastly, `Glucose` and `Age` correlate at **0.34**, potentially indicating age-related changes in glucose metabolism and diabetes risk. The above all shows the potential issue of multicollinearity in the dataset.
+
+Conversely, the correlation between other variables appears to be within acceptable ranges, suggesting that they are not significantly affected by multicollinearity. Therefore, we need to addresse multicollinearity issue by some techniques such as variable selection or regularization methods,improving the robustness of the regression model.
+
+#### Distribution of predictors:
+
+The density plots for the variables in this dataset illustrate the distribution of each variable's values. This visualization helps in understanding the spread, central tendency, and shape of the data for variables such as Pregnancies, Glucose, BloodPressure, Skin Thickness, Insulin, BMI, DiabetesPedigreeFunction, and Age. These plots offer insights into the prevalence and distribution of key factors associated with diabetes diagnosis in the female subjects aged 21 and above.
+
+```{r, fig.dim = c(15, 10), message=FALSE, warning = FALSE}
+data_long <- diabetes_clean %>%
+  pivot_longer(cols = -Outcome, names_to = "Variable", values_to = "Value")
+
+options(repr.plot.width = 15, repr.plot.height = 10)
+density_plot <- ggplot(data_long, aes(x = Value, fill = Variable)) +
+  geom_density(alpha = 0.5) +
+  facet_wrap(~ Variable, scales = "free", nrow = 2, ncol = 4) +
+  theme_minimal() +
+  ggtitle("Density Plots of Factors") +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 25),
+        text = element_text(size = 15)) +
+  guides(fill = "none")
+
+density_plot
+```
+
+##### Understanding the distributions:
+
+Age skews right, indicating a younger population. Blood Pressure and BMI are normally distributed, representing the population. DiabetesPedigreeFunction and Insulin skew right, with low values prevalent; Glucose is normally distributed; Pregnancies skew right, suggesting fewer are common; Skin Thickness is nearly normal, peaking at lower values. These patterns aid in understanding population demographics and physiological factors influencing diabetes prediction.
+
+#### Observing the relationship between each predictor variable and the outcome:
+
+We aim to gain insights into the relationship between each explanatory variable and the response variable before conducting regression analysis. Given the binary nature of the response variable, utilizing boxplots to visualize the relationship between each explanatory variable and the response variable offers a convenient approach.
+
+```{r,fig.dim = c(20, 15), message=FALSE, warning = FALSE}
+function_plot <- ggplot(data = diabetes_clean, aes(x = factor(Outcome), y =DiabetesPedigreeFunction, fill = factor(Outcome))) +
+  geom_boxplot(colour = "red") +
+  labs(title = "DiabetesPedigreeFunction vs. Outcome",
+       x = "Diabetes Diagnosis",
+       y = "Diabetes Pedigree Function") + theme(
+    text = element_text(size = 20),
+    axis.text = element_text(size = 20),
+    axis.title = element_text(size = 15)
+  ) +
+  scale_fill_brewer(palette = "Reds", labels = c("0" = "No Diabetes", "1" = "Diabetes"))+
+  theme_minimal() +
+  theme(legend.position = "none") +
+  theme(text = element_text(size = 15))
+
+Skin_plot <- ggplot(data = diabetes_clean, aes(x = as.factor(Outcome), y =SkinThickness, fill = factor(Outcome))) +
+  geom_boxplot(colour = "purple") +
+  labs(title = "Skin Thickness vs. Outcome",
+       x = "Diabetes Diagnosis",
+       y = "Skin Thickness") + theme(
+    text = element_text(size = 20),
+    axis.text = element_text(size = 20),
+    axis.title = element_text(size = 15)
+) +
+  scale_fill_brewer(palette = "PuRd", labels = c("0" = "No Diabetes", "1" = "Diabetes"))+
+  theme_minimal() +
+  theme(legend.position = "none") +
+  theme(text = element_text(size = 15))
+
+glucose_plot <- ggplot(data = diabetes_clean, aes(x = as.factor(Outcome), y =Glucose, fill = factor(Outcome))) +
+  geom_boxplot(colour = "blue") +
+  labs(title = "Glucose vs. Outcome",
+       x = "Diabetes Diagnosis",
+       y = "Glucose Level") + theme(
+    text = element_text(size = 20),
+    axis.text = element_text(size = 20),
+    axis.title = element_text(size = 15)
+  ) +
+  scale_fill_brewer(palette = "Blues", labels = c("0" = "No Diabetes", "1" = "Diabetes"))+
+  theme_minimal() +
+  theme(legend.position = "none") +
+  theme(text = element_text(size = 15))
+
+bloodPressure_plot <- ggplot(data = diabetes_clean, aes(x = as.factor(Outcome), y =BloodPressure, fill = factor(Outcome))) +
+  geom_boxplot(colour = "red") +
+  labs(title = "Blood Pressure vs. Outcome",
+       x = "Diabetes Diagnosis",
+       y = "Blood Pressure") + theme(
+    text = element_text(size = 20),
+    axis.text = element_text(size = 20),
+    axis.title = element_text(size = 15)
+  ) +
+  scale_fill_brewer(palette = "RdPu", labels = c("0" = "No Diabetes", "1" = "Diabetes"))+
+  theme_minimal() +
+  theme(legend.position = "none") +
+  theme(text = element_text(size = 15))
+
+Insulin_plot <- ggplot(data = diabetes_clean, aes(x = as.factor(Outcome), y =Insulin, fill = factor(Outcome))) +
+  geom_boxplot(colour = "darkgreen") +
+  labs(title = "Insulin vs. Outcome",
+       x = "Diabetes Diagnosis",
+       y = "Insulin") + theme(
+    text = element_text(size = 20),
+    axis.text = element_text(size = 20),
+    axis.title = element_text(size = 15)
+  )  +
+  scale_fill_brewer(palette = "BuGn", labels = c("0" = "No Diabetes", "1" = "Diabetes"))+
+  theme_minimal() +
+  theme(legend.position = "none") +
+  theme(text = element_text(size = 15))
+
+BMI_plot <- ggplot(data = diabetes_clean, aes(x = as.factor(Outcome), y =BMI, fill = factor(Outcome))) +
+  geom_boxplot(colour = "darkgreen") +
+  labs(title = "BMI vs. Outcome",
+       x = "Diabetes Diagnosis",
+       y = "Body Mass Index")  + theme(
+    text = element_text(size = 20),
+    axis.text = element_text(size = 20),
+    axis.title = element_text(size = 15)
+  )  +
+  scale_fill_brewer(palette = "Greens", labels = c("0" = "No Diabetes", "1" = "Diabetes")) +
+  theme_minimal() +
+  theme(legend.position = "none") +
+  theme(text = element_text(size = 15))
+
+Age_plot <- ggplot(data = diabetes_clean, aes(x = as.factor(Outcome), y =Age, fill = factor(Outcome))) +
+  geom_boxplot(colour = "red") +
+  labs(title = "Age vs. Outcome",
+       x = "Diabetes Diagnosis",
+       y = "Age")  + theme(
+    text = element_text(size = 20),
+    axis.text = element_text(size = 20),
+    axis.title = element_text(size = 15)
+  )  +
+  scale_fill_brewer(palette = "OrRd", labels = c("0" = "No Diabetes", "1" = "Diabetes")) +
+  theme_minimal() +
+  theme(legend.position = "none") +
+  theme(text = element_text(size = 15))
+
+Pregnancies_plot <- ggplot(data = diabetes_clean, aes(x = as.factor(Outcome), y =Pregnancies, fill = factor(Outcome))) +
+  geom_boxplot(colour = "DarkBlue") +
+  labs(title = "Pregnancies vs. Outcome",
+       x = "Diabetes Diagnosis",
+       y = "Number of Pregnancies") + theme(
+    text = element_text(size = 20),
+    axis.text = element_text(size = 20),
+    axis.title = element_text(size = 15)
+  )  +
+  scale_fill_brewer(palette = "BuPu", labels = c("0" = "No Diabetes", "1" = "Diabetes")) +
+  theme_minimal() +
+  theme(legend.position = "none") +
+  theme(text = element_text(size = 15))
+
+combined_plot <- plot_grid(function_plot, Skin_plot, glucose_plot, bloodPressure_plot, Insulin_plot, BMI_plot, Age_plot, Pregnancies_plot, nrow = 2, ncol = 4)
+
+options(repr.plot.width = 20, repr.plot.height = 15)
+plot_grid(ggdraw() + draw_label("Diabetes Outcome Across Key Factors", fontface='bold', size = 25), combined_plot, ncol=1, rel_heights=c(0.1, 1))
+```
+
+##### Conclusion from boxplots:
+
+-   From the eight boxplots above, a notable disparity emerges in the mean glucose levels between individuals with and without diabetes. Specifically, the mean glucose level appears markedly higher among those with diabetes compared to those without, suggesting a positive association between glucose level and diabetes. Given this observation, further investigation into the relationship between glucose level and diabetes outcome is warranted.
+
+-   Moreover, upon inspecting the boxplot depicting diabetes status against age, a similar pattern emerges. Individuals diagnosed with diabetes have a higher mean age compared to those without. Consequently, it can be inferred that both age and glucose level are potentially significant explanatory variables associated with diabetes outcome.
+
+-   Additionally, it's noteworthy that the mean values of other variables exhibit slight variations based on whether individuals have diabetes or not. Specifically, when an individual has diabetes, the mean values of all eight predictor variables are higher compared to when the person doesn't have diabetes, suggesting a potentially positive relationship between each X and Y to some extent.
+
+### Methods (plan):
+
+#### Model selection methods:
+
+-   We will begin with a full model incorporating all eight variables, then use backward selection based on AIC and BIC to refine our model selection. This process yields two models: an AIC-selected model and a BIC-selected model. Backward selection eliminates a non-significant predictor from the model in each interaction, resulting in an interpretable final model. AIC and BIC serve as suitable selection criteria due to the binary nature of the response variable in our dataset. Unlike adjusted $R^2$ or residual mean square, AIC and BIC focus on maximizing the likelihood of the data while penalizing model complexity. For comparision, AIC emphasizes maximizing the likelihood, BIC adds a higher penalty for decreasing model complexity, favoring a more straightforward and simpler model.
+
+-   Given the objective of setting up a model for prediction, avoiding model overfitting and reducing the variance of estimated cofficients are important concerns we need to consider. To address this concern, LASSO regression gives us a great advantage in terms of effectively shrinking some coefficients to zero, thereby increasing the model's generalizability to out-of-sample data. Therefore, we will also incorporate a LASSO regression model into our analysis to serve as another candidate model.
+
+-   We will compare the predictive performance of four candidate models: the full model, AIC-selected model, BIC-selected model, and LASSO model. After splitting the data into training and testing subsets, we will build up each model using the training dataset and evaluate their performance based on AUC values. The model with the highest AUC value was selected as the final model. We will then assess the generalization ability of the final model by fitting it to the testing dataset and computing the AUC value. Using a probability threshold of 0.5, we classify individuals as "1" or "0" accordingly. Additionally, we will compute confusion matrices and evaluated metrics such as Accuracy and Precision to determine the best model for predicting diabetes status. This comprehensive approach allows us to identify the most effective model for our predictive task.
+
+#### Implementation of a proposed model:
+
+-   **Spliting the data into training set and testing set:**
+
+```{r, message=FALSE, warning = FALSE}
+set.seed(123)
+training.samples <- diabetes_clean$Outcome %>%
+  createDataPartition(p = 0.7, list = FALSE)
+diabetes_train  <- diabetes_clean[training.samples, ]
+diabetes_test <- diabetes_clean[-training.samples, ]
+nrow(diabetes_train)
+nrow(diabetes_test)
+```
+
+-   **Fit the full logistic regression model using training dataset:**
+
+```{r, message=FALSE, warning = FALSE}
+full_model <- glm(formula = Outcome ~ ., family = binomial, data = diabetes_train)
+summary(full_model)
+```
+
+-   **Backward selection based on AIC to get a AIC-selected model:**
+
+```{r, message=FALSE, warning = FALSE}
+AIC_selection <- stepAIC(full_model, method = "backward")
+AIC_selection
+```
+
+```{r, message=FALSE, warning = FALSE}
+AIC_model <- glm(formula = Outcome ~ DiabetesPedigreeFunction + Age + BMI + Glucose, family = binomial, data = diabetes_train)
+summary(AIC_model)
+```
+
+-   **Backward selection based on BIC to get a BIC-selected model:**
+
+```{r, message=FALSE, warning = FALSE}
+BIC_selection <- step(full_model, direction = "backward", k = log(nrow(diabetes_clean)), trace = FALSE)
+BIC_selection
+```
+
+```{r, message=FALSE, warning = FALSE}
+
+BIC_model <- glm(formula = Outcome ~ Age + BMI + Glucose, family = binomial, data = diabetes_train)
+summary(BIC_model)
+```
+
+-   **Compute three confusion matrics for full model, AIC-selected model and BIC-selected model seperately:**
+
+```{r, message=FALSE, warning = FALSE}
+diabetes_pred_class_full_model <-
+  round(predict(full_model, type = "response"), 0)
+diabetes_confusion_matrix <-
+    confusionMatrix(
+    data = as.factor(diabetes_pred_class_full_model),
+    reference = as.factor(diabetes_train$Outcome),
+    positive = '1'
+)
+
+diabetes_confusion_matrix
+```
+
+```{r, message=FALSE, warning = FALSE}
+diabetes_pred_class_AIC_model <-
+  round(predict(AIC_model, type = "response"), 0)
+
+diabetes_confusion_matrix_AIC_model <-
+    confusionMatrix(
+    data = as.factor(diabetes_pred_class_AIC_model),
+    reference = as.factor(diabetes_train$Outcome),
+    positive = '1'
+)
+
+diabetes_confusion_matrix_AIC_model
+```
+
+```{r, message=FALSE, warning = FALSE}
+diabetes_pred_class_BIC_model <-
+  round(predict(BIC_model, type = "response"), 0)
+
+diabetes_confusion_matrix_BIC_model <-
+    confusionMatrix(
+    data = as.factor(diabetes_pred_class_BIC_model),
+    reference = as.factor(diabetes_train$Outcome),
+    positive = '1'
+)
+
+diabetes_confusion_matrix_BIC_model
+```
+
+-   **Get AUC values for these 3 candidate models:**
+
+```{r, message=FALSE, warning = FALSE}
+ROC_full_log <- roc(
+  response = diabetes_train$Outcome,
+  predictor = predict(full_model, type = "response")
+)
+cat("Full model AUC value:", ROC_full_log$auc)
+
+ROC_AIC_log <- roc(
+  response = diabetes_train$Outcome,
+  predictor = predict(AIC_model, type = "response")
+)
+cat("AIC-selected model AUC value:", ROC_AIC_log$auc)
+
+ROC_BIC_log <- roc(
+  response = diabetes_train$Outcome,
+  predictor = predict(BIC_model, type = "response")
+)
+cat("BIC-selected model AUC value:", ROC_BIC_log$auc)
+```
+
+-   **Using LASSO to get a logistic regression model and compare the prediction performance of LASSO model with those 3 models above.**
+
+```{r, message=FALSE, warning = FALSE}
+model_matrix_X_train <-
+    as.matrix(diabetes_train[, -9])
+
+matrix_Y_train <-
+    as.matrix(diabetes_train[, 9], ncol = 1)
+```
+
+```{r, message=FALSE, warning = FALSE}
+#set.seed(271)
+diabetes_cv_lambda_LASSO <-
+  cv.glmnet(
+  x = model_matrix_X_train, y = matrix_Y_train,
+  alpha = 1,
+  family = 'binomial',
+  type.measure = 'auc',
+  nfolds = 5)
+
+diabetes_cv_lambda_LASSO
+
+```
+
+```{r, message=FALSE, warning = FALSE}
+
+diabetes_lambda_1se_AUC_LASSO <- round(diabetes_cv_lambda_LASSO$lambda.1se, 4)
+
+diabetes_lambda_1se_AUC_LASSO
+```
+
+```{r, message=FALSE, warning = FALSE}
+
+diabetes_LASSO_1se_AUC <- glmnet(
+  x = model_matrix_X_train, y = matrix_Y_train,
+  alpha = 1,
+  family = 'binomial',
+  lambda = diabetes_lambda_1se_AUC_LASSO
+)
+coef(diabetes_LASSO_1se_AUC)
+```
+
+```{r,fig.dim = c(15, 10), message=FALSE, warning = FALSE}
+
+ROC_lasso <-
+    roc(
+        response = diabetes_train$Outcome,
+        predictor = predict(diabetes_LASSO_1se_AUC,
+                     newx = model_matrix_X_train)[,"s0"] )
+ROC_lasso
+AUC_lasso <- pROC::auc(ROC_lasso)
+```
+
+-   **Compare the AUC values for our 4 candidate models, full model, AIC-selected model, BIC-selected model and LASSO model.**
+
+```{r, message=FALSE, warning = FALSE}
+
+model_names <- c("Full Model", "AIC-selected Model", "BIC-selected Model", "LASSO Model")
+AUC_values <- c(ROC_full_log$auc, ROC_AIC_log$auc, ROC_BIC_log$auc, as.double(AUC_lasso))
+comparison_table <- data.frame(Model = model_names, AUC = AUC_values)
+
+kable(comparison_table)
+```
+
+#### Results:
+
+After comparing the AUC values for the four candidate models, we observed that the AIC-selected model had the best prediction performance on the training dataset. Consequently, we determined to adopt the AIC-selected model as our final predictive model. Next, we will assess the out-of-sample performance of our final model by applying it to the testing dataset, thereby generating the ROC curve and computing the corresponding AUC value.
+
+```{r, fig.dim = c(15, 10), message=FALSE, warning = FALSE}
+
+options(repr.plot.width = 15, repr.plot.height = 10)
+
+model_X_test <- diabetes_test[, -which(names(diabetes_test) == "Outcome")]
+
+predicted_prob_AIC <- predict(AIC_model, newdata = model_X_test, type = "response")
+predicted_fullmodel <- predict(full_model, newdata = model_X_test, type = "response")
+predicted_prob_BIC <- predict(BIC_model, newdata = model_X_test, type = "response")
+predicted_lasso <- predict(diabetes_LASSO_1se_AUC, newx = as.matrix(model_X_test))[,"s0"]
+
+ROC_AIC_model_in_testdata <- roc(response = diabetes_test$Outcome, predictor = predicted_prob_AIC)
+plot(ROC_AIC_model_in_testdata,  print.auc = TRUE, print.auc.x = 0.5, print.auc.y = 0.5, col = "steelblue", lwd = 3, lty = 2, main = "ROC Curve of Models using Test Dataset", cex.main = 2)
+
+ROC_full_model_in_testdata <- roc(response = diabetes_test$Outcome, predictor = predicted_fullmodel)
+plot(ROC_full_model_in_testdata, print.auc = TRUE, print.auc.x = 0.5, print.auc.y = 0.45, col = "black", lwd = 3, lty = 2, add = TRUE)
+
+ROC_BIC_model_in_testdata <- roc(response = diabetes_test$Outcome, predictor = predicted_prob_BIC)
+plot(ROC_BIC_model_in_testdata, print.auc = TRUE, print.auc.x = 0.5, print.auc.y = 0.40, col = "springgreen", lwd = 3, lty = 2, add = TRUE)
+
+ROC_lasso_in_testdata <- roc(response = diabetes_test$Outcome, predictor = predicted_lasso)
+plot(ROC_lasso_in_testdata, print.auc = TRUE, print.auc.x = 0.5, print.auc.y = 0.35, col = "red", lwd = 3, lty = 2, add = TRUE)
+
+
+legend("bottomright", legend = model_names, col = c("black", "steelblue", "springgreen", "red"), lty = 2, lwd = 3)
+```
+
+#### Result summary and conclusion:
+
+Based on our analysis, the AIC-selected model has the best prediction performance among the four models we compared. Upon fitting the AIC-selected model to the testing dataset, we obtained an AUC value of 0.808, which underscores the robust predictive capability of our AIC-selected model when applied to out-of-sample data.
+
+Therefore, we have concluded that the AIC-selected model aligns most effectively with our project's objective of establishing a predictive model for determining the probabilty of an individual having diabetes. Below is a summary of the selected model:
+
+$$
+\begin{align*}
+\log\left(\frac{p_i}{1-p_i}\right) &= -10.620170 +1.146492 \cdot \text{DiabetesPedigreeFunction} + 0.040539 \cdot \text{Age} \\
+&\quad + 0.078362 \cdot \text{BMI} + 0.042436 \cdot \text{Glucose}
+\end{align*}
+$$
+
+where $p_i$ is the probability of the $i{\text{th}}$ individual having diabetes.
+
+Given an individual's diabetes percentage, age, BMI, and glucose level, this model can be used to predictive the probability of diabetes as
+
+$$p_{i} = \frac{1}{1+e^{-(-10.620170 + 1.146492 \times \text{DiabetesPedigreeFunction} + 0.040539 \times \text{Age} + 0.078362 \times \text{BMI} + 0.042436 \times \text{Glucose})}}$$
+
+## Discussion:
+
+Through this project, we've developed a predictive model to estimate the probability of an individual having diabetes. In our final model, we've left with four key variables, making the model has the best prediction performance: DiabetesPedigreeFunction, Age, BMI, and Glucose. Notably, all coefficients associated with these variables are positive, indicating that higher values for these factors correlate with an increased prbability of diabetes. Following model comparison and selection processes, the AIC-selected model has been determined as the optimal choice, demonstrating best predictive performance both in-sample and out-of-sample prediction among our 4 candidate models with AUC value of approximately 0.8, indicating its robust predictive capabilities.
+
+The outcome of our analysis was surprising. While AIC-based stepwise selection is commonly used to explore predictor-response relationships, we opted to assess the efficacy of a LASSO model, known for predictive power and overfitting avoidance. We expected the LASSO model to outperform the AIC-selected model in out-of-sample prediction accuracy. However, results showed the AIC-selected model not only offered good interpretability but also outperformed the LASSO model in terms of AUC values. This outcome is better than we expected as it signifies a balance between model interpretability and predictive powerness in our final model.
+
+While the AIC-selected model performed best on the testing dataset, its superiority on out-of-sample data is not guaranteed. Implementing k-fold cross-validation and calculating CV-AUC values for our four candidate models can enhance our methodology. This approach assesses models across various data partitions, reducing reliance on chance results from a single train-test split. CV-AUC values may not always align with initial model selection; for instance, the Lasso model might show the highest CV-AUC value, indicating superior prediction performance. Integrating k-fold cross-validation into our model evaluation enhances our methodology's robustness, ensuring our final predictive model is well-suited for generalization to unseen data.
+
+A key area for future exploration is identifying additional predictors beyond those in our dataset that could influence diabetes risk. Factors like other medical histories and pharmaceutical supplements may provide valuable insights. Additionally, we should investigate how different parameters, such as lambda values, affect the LASSO model's performance. In our analysis we use lambda.1se value, and explore the performance with the lambda.min value. In summary, exploring new predictors and optimizing regularization parameters can enhance our predictive models and improve our ability to predict and manage diabetes.
+
+## References:
+
+1.  **Related Study 1**: Joshi, Ram D, and Chandra K Dhakal. "Predicting Type 2 Diabetes Using Logistic Regression and Machine Learning Approaches." International Journal of Environmental Research and Public Health, U.S. National Library of Medicine, 9 July 2021, www.ncbi.nlm.nih.gov/pmc/articles/PMC8306487/.
+
+2.  **Related Study 2**: Chang, Victor, et al. "Pima Indians Diabetes Mellitus Classification Based on Machine Learning (ML) Algorithms." Neural Computing & Applications, U.S. National Library of Medicine, 24 Mar. 2022, www.ncbi.nlm.nih.gov/pmc/articles/PMC8943493/.
+
+3.  **Data source:** National Institute of Diabetes and Digestive and Kidney Diseases. "Predict Diabetes." Kaggle, 9 Nov. 2022, www.kaggle.com/datasets/whenamancodes/predict-diabities?resource=download.
+
+4.  **More Details on data:** "Pima Indians Diabetes Database - Dataset by Data-Society." Data.World, 13 Dec. 2016, www.data.world/data-society/pima-indians-diabetes-database.
+
+5.  **ROC in health data:** Nahm, Francis Sahngun. "Receiver Operating Characteristic Curve: Overview and Practical Use for Clinicians." Korean Journal of Anesthesiology, U.S. National Library of Medicine, Feb. 2022, www.ncbi.nlm.nih.gov/pmc/articles/PMC8831439/.

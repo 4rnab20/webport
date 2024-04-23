@@ -1,0 +1,1857 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.4.553">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Arnab Das">
+<meta name="dcterms.date" content="2023-05-04">
+
+<title>Arnab Das - Predictive model to flag potential cancellations</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script><script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-dark.min.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg==" crossorigin="anonymous"></script>
+
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
+
+
+<link rel="stylesheet" href="../../styles.css">
+</head>
+
+<body class="nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top quarto-banner">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">Arnab Das</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../project.html"> 
+<span class="menu-text">Projects</span></a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/4rnab20"> <i class="bi bi-github" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+          <div class="quarto-navbar-tools">
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <div class="quarto-title-block"><div><h1 class="title">Predictive model to flag potential cancellations</h1><button type="button" class="btn code-tools-button dropdown-toggle" id="quarto-code-tools-menu" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi"></i> Code</button><ul class="dropdown-menu dropdown-menu-end" aria-labelelledby="quarto-code-tools-menu"><li><a id="quarto-show-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Show All Code</a></li><li><a id="quarto-hide-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Hide All Code</a></li></ul></div></div>
+                                <div class="quarto-categories">
+                <div class="quarto-category">python</div>
+              </div>
+                  </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p>Arnab Das </p>
+            </div>
+    </div>
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">May 4, 2023</p>
+      </div>
+    </div>
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#background" id="toc-background" class="nav-link active" data-scroll-target="#background">Background :</a>
+  <ul class="collapse">
+  <li><a href="#importing-the-necessary-libraries" id="toc-importing-the-necessary-libraries" class="nav-link" data-scroll-target="#importing-the-necessary-libraries">Importing the necessary libraries</a></li>
+  <li><a href="#exploratory-data-analysis" id="toc-exploratory-data-analysis" class="nav-link" data-scroll-target="#exploratory-data-analysis">Exploratory data analysis:</a></li>
+  </ul></li>
+  <li><a href="#data-visualization" id="toc-data-visualization" class="nav-link" data-scroll-target="#data-visualization">Data visualization:</a>
+  <ul class="collapse">
+  <li><a href="#outlier-analysis-of-numerical-features" id="toc-outlier-analysis-of-numerical-features" class="nav-link" data-scroll-target="#outlier-analysis-of-numerical-features">Outlier Analysis of Numerical Features:</a></li>
+  <li><a href="#distribution-analysis-of-numerical-features" id="toc-distribution-analysis-of-numerical-features" class="nav-link" data-scroll-target="#distribution-analysis-of-numerical-features">Distribution Analysis of Numerical Features:</a></li>
+  <li><a href="#distribution-analysis-of-categorical-features" id="toc-distribution-analysis-of-categorical-features" class="nav-link" data-scroll-target="#distribution-analysis-of-categorical-features">Distribution Analysis of Categorical Features:</a></li>
+  </ul></li>
+  <li><a href="#modeling" id="toc-modeling" class="nav-link" data-scroll-target="#modeling">Modeling:</a>
+  <ul class="collapse">
+  <li><a href="#preprocessing-and-transformations" id="toc-preprocessing-and-transformations" class="nav-link" data-scroll-target="#preprocessing-and-transformations">Preprocessing and transformations:</a></li>
+  <li><a href="#linear-models" id="toc-linear-models" class="nav-link" data-scroll-target="#linear-models">Linear models:</a></li>
+  <li><a href="#non-linear-models" id="toc-non-linear-models" class="nav-link" data-scroll-target="#non-linear-models">Non-linear models:</a></li>
+  <li><a href="#optimization" id="toc-optimization" class="nav-link" data-scroll-target="#optimization">Optimization:</a></li>
+  <li><a href="#feature-importances-and-selection" id="toc-feature-importances-and-selection" class="nav-link" data-scroll-target="#feature-importances-and-selection">Feature importances and selection:</a></li>
+  </ul></li>
+  <li><a href="#results" id="toc-results" class="nav-link" data-scroll-target="#results">Results:</a>
+  <ul class="collapse">
+  <li><a href="#model-caveats" id="toc-model-caveats" class="nav-link" data-scroll-target="#model-caveats">Model caveats:</a></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
+
+
+<section id="background" class="level2">
+<h2 class="anchored" data-anchor-id="background">Background :</h2>
+<p>The behavior of customers and booking options have thoroughly altered by the online hotel reservation channels. A significant number of reservations are canceled always, mostly due to cancellations or no-shows. Cancellations can be caused by a variety of factors, such as scheduling conflicts, changes in plans, etc. This is observed more frequently due to the fact that hotels often make it easier for guests to cancel their reservations by offering free or low cost cancellation options. Although this benefits the guests heavily, it may risk the hotel losing on potential revenue.</p>
+<p>Therefore, the outcome of this project is to assist the hotel owners to better understand whether a customer will confirm the booking or cancel it by developing and implementing machine learning methodologies.</p>
+<p><strong>Source : The dataset used in this project is from Kaggle. Link -&gt;</strong> <a href="https://www.kaggle.com/datasets/gauravduttakiit/reservation-cancellation-prediction?select=train__dataset.csv">Reservation Cancellation Prediction Dataset</a></p>
+<section id="importing-the-necessary-libraries" class="level3">
+<h3 class="anchored" data-anchor-id="importing-the-necessary-libraries">Importing the necessary libraries</h3>
+<div id="6f07baea" class="cell" data-execution_count="2">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> os</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="op">%</span>matplotlib inline</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.cluster <span class="im">import</span> DBSCAN, KMeans</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.compose <span class="im">import</span> ColumnTransformer, make_column_transformer</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.feature_extraction.text <span class="im">import</span> CountVectorizer</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.impute <span class="im">import</span> SimpleImputer</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.linear_model <span class="im">import</span> LogisticRegression</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.ensemble <span class="im">import</span> RandomForestClassifier, RandomForestRegressor</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> r2_score</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.model_selection <span class="im">import</span> (</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>    GridSearchCV,</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>    RandomizedSearchCV,</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>    cross_validate,</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>    train_test_split,</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> (</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>    classification_report,</span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>    confusion_matrix,</span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>    f1_score,</span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>    recall_score,</span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>    precision_score,</span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>    make_scorer,</span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.linear_model <span class="im">import</span> Ridge</span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.pipeline <span class="im">import</span> Pipeline, make_pipeline</span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.preprocessing <span class="im">import</span> OneHotEncoder, OrdinalEncoder, StandardScaler</span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.svm <span class="im">import</span> SVC</span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.neighbors <span class="im">import</span> KNeighborsClassifier</span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.tree <span class="im">import</span> DecisionTreeClassifier</span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a>pd.set_option(<span class="st">"display.max_colwidth"</span>, <span class="dv">0</span>)</span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.feature_selection <span class="im">import</span> RFECV</span>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.feature_selection <span class="im">import</span> SequentialFeatureSelector</span>
+<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> warnings <span class="im">import</span> simplefilter</span>
+<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a><span class="co"># ignore all future warnings</span></span>
+<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a>simplefilter(action<span class="op">=</span><span class="st">'ignore'</span>, category<span class="op">=</span><span class="pp">FutureWarning</span>)</span>
+<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> shap, eli5</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+<section id="exploratory-data-analysis" class="level3">
+<h3 class="anchored" data-anchor-id="exploratory-data-analysis">Exploratory data analysis:</h3>
+<p>In this exploratory data analysis (EDA) section, we load the training dataset from a CSV file and prepare it for analysis. We split the data into training and testing sets, with 70% allocated for training. Then, we provide a summary of the descriptive statistics for the training dataset to gain insights into its distribution and characteristics.</p>
+<div id="1cdd66a3" class="cell" data-scrolled="true" data-execution_count="3">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> pd.read_csv(<span class="st">"train__dataset.csv"</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> data.drop(<span class="st">"booking_status"</span>, axis<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> data[<span class="st">"booking_status"</span>]</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>X_train, X_test, y_train, y_test <span class="op">=</span> train_test_split(X, y, random_state<span class="op">=</span><span class="dv">111</span>, train_size <span class="op">=</span> <span class="fl">0.7</span>) <span class="co"># setting a random state to make it reproducible</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>df_train <span class="op">=</span> X_train.join(y_train)</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>df_train.describe()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="3">
+<div>
+<div>
+
+
+<table class="dataframe table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">no_of_adults</th>
+<th data-quarto-table-cell-role="th">no_of_children</th>
+<th data-quarto-table-cell-role="th">no_of_weekend_nights</th>
+<th data-quarto-table-cell-role="th">no_of_week_nights</th>
+<th data-quarto-table-cell-role="th">type_of_meal_plan</th>
+<th data-quarto-table-cell-role="th">required_car_parking_space</th>
+<th data-quarto-table-cell-role="th">room_type_reserved</th>
+<th data-quarto-table-cell-role="th">lead_time</th>
+<th data-quarto-table-cell-role="th">arrival_year</th>
+<th data-quarto-table-cell-role="th">arrival_month</th>
+<th data-quarto-table-cell-role="th">arrival_date</th>
+<th data-quarto-table-cell-role="th">market_segment_type</th>
+<th data-quarto-table-cell-role="th">repeated_guest</th>
+<th data-quarto-table-cell-role="th">no_of_previous_cancellations</th>
+<th data-quarto-table-cell-role="th">no_of_previous_bookings_not_canceled</th>
+<th data-quarto-table-cell-role="th">avg_price_per_room</th>
+<th data-quarto-table-cell-role="th">no_of_special_requests</th>
+<th data-quarto-table-cell-role="th">booking_status</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">count</td>
+<td>12695.000000</td>
+<td>12695.000000</td>
+<td>12695.000000</td>
+<td>12695.000000</td>
+<td>12695.000000</td>
+<td>12695.000000</td>
+<td>12695.000000</td>
+<td>12695.000000</td>
+<td>12695.000000</td>
+<td>12695.000000</td>
+<td>12695.000000</td>
+<td>12695.000000</td>
+<td>12695.000000</td>
+<td>12695.000000</td>
+<td>12695.000000</td>
+<td>12695.000000</td>
+<td>12695.000000</td>
+<td>12695.000000</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">mean</td>
+<td>1.845845</td>
+<td>0.106892</td>
+<td>0.808980</td>
+<td>2.214100</td>
+<td>0.313037</td>
+<td>0.031902</td>
+<td>0.336510</td>
+<td>84.945884</td>
+<td>2017.821189</td>
+<td>7.441985</td>
+<td>15.628909</td>
+<td>0.806459</td>
+<td>0.026073</td>
+<td>0.022922</td>
+<td>0.159354</td>
+<td>103.513689</td>
+<td>0.616384</td>
+<td>0.324143</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">std</td>
+<td>0.517027</td>
+<td>0.410776</td>
+<td>0.871795</td>
+<td>1.418276</td>
+<td>0.623953</td>
+<td>0.175747</td>
+<td>0.774089</td>
+<td>85.788163</td>
+<td>0.383209</td>
+<td>3.081619</td>
+<td>8.779931</td>
+<td>0.645516</td>
+<td>0.159359</td>
+<td>0.379929</td>
+<td>1.785368</td>
+<td>35.090118</td>
+<td>0.790173</td>
+<td>0.468072</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">min</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>2017.000000</td>
+<td>1.000000</td>
+<td>1.000000</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>0.000000</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">25%</td>
+<td>2.000000</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>1.000000</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>17.000000</td>
+<td>2018.000000</td>
+<td>5.000000</td>
+<td>8.000000</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>80.750000</td>
+<td>0.000000</td>
+<td>0.000000</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">50%</td>
+<td>2.000000</td>
+<td>0.000000</td>
+<td>1.000000</td>
+<td>2.000000</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>57.000000</td>
+<td>2018.000000</td>
+<td>8.000000</td>
+<td>16.000000</td>
+<td>1.000000</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>99.450000</td>
+<td>0.000000</td>
+<td>0.000000</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">75%</td>
+<td>2.000000</td>
+<td>0.000000</td>
+<td>2.000000</td>
+<td>3.000000</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>125.000000</td>
+<td>2018.000000</td>
+<td>10.000000</td>
+<td>23.000000</td>
+<td>1.000000</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>120.000000</td>
+<td>1.000000</td>
+<td>1.000000</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">max</td>
+<td>4.000000</td>
+<td>9.000000</td>
+<td>6.000000</td>
+<td>17.000000</td>
+<td>3.000000</td>
+<td>1.000000</td>
+<td>6.000000</td>
+<td>443.000000</td>
+<td>2018.000000</td>
+<td>12.000000</td>
+<td>31.000000</td>
+<td>4.000000</td>
+<td>1.000000</td>
+<td>13.000000</td>
+<td>58.000000</td>
+<td>375.500000</td>
+<td>5.000000</td>
+<td>1.000000</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+</div>
+<p>Based on the summary statistics provided, here are some initial observations about the data: * There are 12,695 observations in the train dataset. * The average number of adults per booking is 1.85 while the average number of children per booking is 0.11 <br> * On average people visit between July and August, meaning the hotel is busier during summer holidays. * The average number of nights stayed over a weekend is 0.81 while the average number of nights stayed during the week is 2.21 <br> * The average lead time for bookings is 84.95 days, with a standard deviation of 85.79. <br> * Only 2.6% of bookings are from repeated guests on average <br> * The average price per room is 103.51 <br> * The majority of bookings (67.6%) are confirmed, while the remaining 32.4% are canceled. <br></p>
+</section>
+</section>
+<section id="data-visualization" class="level2">
+<h2 class="anchored" data-anchor-id="data-visualization">Data visualization:</h2>
+<p>To identify patterns or trends in the data relative to target class, we can create visualisations of some features for each target classes to see the differences between them.</p>
+<section id="outlier-analysis-of-numerical-features" class="level3">
+<h3 class="anchored" data-anchor-id="outlier-analysis-of-numerical-features">Outlier Analysis of Numerical Features:</h3>
+<div id="9531d255" class="cell" data-execution_count="4">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Define the features</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>features <span class="op">=</span> [<span class="st">'lead_time'</span>, <span class="st">'avg_price_per_room'</span>]</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>fig, axes <span class="op">=</span> plt.subplots(nrows <span class="op">=</span> <span class="dv">1</span>, ncols<span class="op">=</span><span class="bu">len</span>(features), figsize<span class="op">=</span>(<span class="dv">15</span>, <span class="dv">6</span>))</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>fig.suptitle(<span class="st">"Boxen Plots of Features"</span>, fontsize<span class="op">=</span><span class="dv">16</span>, fontweight<span class="op">=</span><span class="st">'bold'</span>)</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Iterate over features</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i, feature <span class="kw">in</span> <span class="bu">enumerate</span>(features):</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>    sns.boxenplot(data<span class="op">=</span>df_train, y <span class="op">=</span> feature, x <span class="op">=</span> <span class="st">'booking_status'</span>, palette<span class="op">=</span><span class="st">"husl"</span>, ax<span class="op">=</span>axes[i])</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    axes[i].set_title(<span class="st">"Boxen Plot of "</span> <span class="op">+</span> feature <span class="op">+</span> <span class="st">" by booking status"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="index_files/figure-html/cell-4-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>The provided boxen plots offer insights into booking behavior based on lead time and average room price. For lead time, bookings not cancelled tend to have shorter lead times, possibly indicating last-minute reservations, while cancelled bookings show longer and more varied lead times, suggesting advanced bookings with diverse lead times. For average room price, non-cancelled bookings exhibit similar median prices as cancelled bookings. This insight challenges the initial observation and prompts the need for further analysis to better understand guest booking preferences and cancellation behaviors.</p>
+</section>
+<section id="distribution-analysis-of-numerical-features" class="level3">
+<h3 class="anchored" data-anchor-id="distribution-analysis-of-numerical-features">Distribution Analysis of Numerical Features:</h3>
+<div id="4cdb379a" class="cell" data-execution_count="5">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Define the features</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>features <span class="op">=</span> [<span class="st">'lead_time'</span>, <span class="st">'avg_price_per_room'</span>]</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>fig, axes <span class="op">=</span> plt.subplots(nrows <span class="op">=</span> <span class="dv">1</span>, ncols<span class="op">=</span><span class="bu">len</span>(features), figsize<span class="op">=</span>(<span class="dv">10</span>, <span class="dv">5</span>))</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>fig.suptitle(<span class="st">"Density Plots of Features"</span>, fontsize<span class="op">=</span><span class="dv">16</span>, fontweight<span class="op">=</span><span class="st">'bold'</span>)</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Iterate over features</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i, feature <span class="kw">in</span> <span class="bu">enumerate</span>(features):</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    sns.kdeplot(data<span class="op">=</span>df_train, x<span class="op">=</span>feature, hue<span class="op">=</span><span class="st">"booking_status"</span>, bw_adjust<span class="op">=</span><span class="dv">2</span>, fill<span class="op">=</span><span class="va">True</span>, palette<span class="op">=</span><span class="st">"husl"</span>, ax<span class="op">=</span>axes[i],</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>                legend<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>    axes[i].set_title(<span class="st">"KDE Plot of "</span> <span class="op">+</span> feature <span class="op">+</span> <span class="st">" by booking status"</span>)</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>fig.legend(title <span class="op">=</span> <span class="st">"Booking Status"</span>, labels<span class="op">=</span>[<span class="st">"Cancelled"</span>, <span class="st">"Not Cancelled"</span>], bbox_to_anchor<span class="op">=</span>(<span class="fl">1.1</span>, <span class="fl">0.5</span>), fontsize <span class="op">=</span> <span class="st">"large"</span>, title_fontsize<span class="op">=</span><span class="st">'large'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="index_files/figure-html/cell-5-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>The histograms reveal distinct patterns in booking behavior and cancellation likelihood based on lead time and average room price. For lead time, bookings are predominantly confirmed when the interval between booking and arrival is short, with cancellations becoming more prevalent as lead time increases beyond 100 days. Conversely, guests are more likely to confirm bookings when the lead time is under 100 days. Regarding average room price, confirmed bookings consistently outnumber cancellations across all price ranges. However, the highest confirmation rates occur when the average room price falls between 50 and 125. Beyond this range, cancellation probabilities increase, approaching parity with confirmation probabilities. In summary, shorter lead times and moderate room prices between 50 and 125 are associated with higher confirmation rates, while longer lead times are associated with increased cancellation probabilities. These insights can inform hotel management strategies to optimize booking processes and minimize cancellation rates.</p>
+</section>
+<section id="distribution-analysis-of-categorical-features" class="level3">
+<h3 class="anchored" data-anchor-id="distribution-analysis-of-categorical-features">Distribution Analysis of Categorical Features:</h3>
+<div id="8d720536" class="cell" data-execution_count="6">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Define the categorical features</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>cat_features <span class="op">=</span> [<span class="st">'no_of_adults'</span>, <span class="st">'no_of_children'</span>, <span class="st">'no_of_weekend_nights'</span>, <span class="st">'no_of_week_nights'</span>, </span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>                <span class="st">'type_of_meal_plan'</span>, <span class="st">'required_car_parking_space'</span>, <span class="st">'room_type_reserved'</span>, </span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>                <span class="st">'market_segment_type'</span>, <span class="st">'repeated_guest'</span>, <span class="st">'no_of_previous_cancellations'</span>, </span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>                <span class="st">'no_of_previous_bookings_not_canceled'</span>, <span class="st">'no_of_special_requests'</span>]</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Create subplots with 3 rows and 4 columns</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>fig, axes <span class="op">=</span> plt.subplots(nrows<span class="op">=</span><span class="dv">3</span>, ncols<span class="op">=</span><span class="dv">4</span>, figsize<span class="op">=</span>(<span class="dv">15</span>, <span class="dv">10</span>))</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>fig.suptitle(<span class="st">"Count Plots of Categorical Features"</span>, fontsize<span class="op">=</span><span class="dv">20</span>, fontweight<span class="op">=</span><span class="st">'bold'</span>)</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Iterate over features</span></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i, feature <span class="kw">in</span> <span class="bu">enumerate</span>(cat_features):</span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Filter the DataFrame to include only the top N most frequent categories</span></span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>    top_categories <span class="op">=</span> df_train[feature].value_counts().index[:<span class="dv">10</span>]</span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>    filtered_df <span class="op">=</span> df_train[df_train[feature].isin(top_categories)]</span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>    row <span class="op">=</span> i <span class="op">//</span> <span class="dv">4</span>  <span class="co"># Calculate the row index</span></span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>    col <span class="op">=</span> i <span class="op">%</span> <span class="dv">4</span>   <span class="co"># Calculate the column index</span></span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>    sns.countplot(data<span class="op">=</span>filtered_df, x<span class="op">=</span>feature, hue<span class="op">=</span><span class="st">"booking_status"</span>, palette<span class="op">=</span><span class="st">"mako"</span>, ax<span class="op">=</span>axes[row, col])</span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>    axes[row, col].set_title(feature)</span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>    axes[row, col].legend().set_visible(<span class="va">False</span>)</span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a>fig.legend(title <span class="op">=</span> <span class="st">"Booking Status"</span>, labels<span class="op">=</span>[<span class="st">"Not cancelled"</span>, <span class="st">"Cancelled"</span>], bbox_to_anchor<span class="op">=</span>(<span class="fl">1.1</span>, <span class="fl">0.5</span>), fontsize <span class="op">=</span> <span class="st">"large"</span>, title_fontsize<span class="op">=</span><span class="st">'large'</span>)</span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
+<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="index_files/figure-html/cell-6-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Based on the bar plots:</p>
+<ol type="1">
+<li><p><strong>Number of Adults and Children</strong>: Most bookings are made for one or two adults, and very few include children. This suggests that the hotel is primarily used by adults, possibly for business or couples on vacation.</p></li>
+<li><p><strong>Number of Weekend Nights and Week Nights</strong>: Guests typically stay from one to four nights during both weekends and weekdays. This could indicate that the hotel is popular for short stays.</p></li>
+<li><p><strong>Type of Meal Plan</strong>: A specific type of meal plan is predominantly chosen by guests. This could be due to the convenience or cost-effectiveness of this plan.</p></li>
+<li><p><strong>Required Car Parking Space</strong>: A large number of guests do not require car parking spaces, which might suggest that many guests use public transportation or other means of travel.</p></li>
+<li><p><strong>Room Type Reserved</strong>: Various room types are reserved with one being more common. This could indicate a preference for a particular room type, possibly due to cost, size, or amenities.</p></li>
+<li><p><strong>Market Segment Type</strong>: There’s a notable difference in market segment types between cancelled and not cancelled bookings. This could suggest that certain market segments are more likely to cancel their bookings.</p></li>
+<li><p><strong>Repeated Guest</strong>: Most guests are not repeated ones, indicating that the hotel has a diverse guest population.</p></li>
+<li><p><strong>Number of Previous Cancellations and Bookings Not Cancelled</strong>: A majority have zero previous cancellations and many have no prior non-cancelled reservations. This could suggest that most guests are first-time visitors.</p></li>
+<li><p><strong>Number of Special Requests</strong>: Special requests during stays are relatively uncommon, which might indicate that most guests’ needs are met by the standard amenities provided by the hotel.</p></li>
+</ol>
+<p>These observations provide valuable insights into the hotel’s guest demographics and their preferences, which could be useful for making strategic decisions to improve guest satisfaction and business performance. However, these are just observations based on the given plots, and further analysis would be needed to draw more concrete conclusions.</p>
+</section>
+</section>
+<section id="modeling" class="level2">
+<h2 class="anchored" data-anchor-id="modeling">Modeling:</h2>
+<section id="preprocessing-and-transformations" class="level3">
+<h3 class="anchored" data-anchor-id="preprocessing-and-transformations">Preprocessing and transformations:</h3>
+<div id="fc3bdf6e" class="cell" data-execution_count="7">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>numeric_features <span class="op">=</span> [<span class="st">"no_of_adults"</span>, <span class="st">"no_of_children"</span>,<span class="st">"no_of_weekend_nights"</span>,<span class="st">"no_of_week_nights"</span>, <span class="st">"lead_time"</span>, <span class="st">"no_of_previous_cancellations"</span>,<span class="st">"no_of_previous_bookings_not_canceled"</span>,<span class="st">"avg_price_per_room"</span>,<span class="st">"no_of_special_requests"</span>, <span class="st">"arrival_month"</span>] <span class="co"># apply scaling</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>categorical_features <span class="op">=</span> [<span class="st">"type_of_meal_plan"</span>, <span class="st">"room_type_reserved"</span>, <span class="st">"market_segment_type"</span>] <span class="co"># apply one-hot encoding</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>binary_features <span class="op">=</span> [<span class="st">"required_car_parking_space"</span>, <span class="st">"repeated_guest"</span>] <span class="co"># apply one-hot encoding with drop="if_binary"</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>drop_features <span class="op">=</span> [<span class="st">"arrival_year"</span>, <span class="st">"arrival_date"</span>] <span class="co"># customers make bookings depending on mostly months  </span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>target <span class="op">=</span> <span class="st">"booking_status"</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>numeric_transformer <span class="op">=</span> StandardScaler()</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>categorical_transformer <span class="op">=</span> OneHotEncoder(handle_unknown<span class="op">=</span><span class="st">"ignore"</span>)</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>binary_transformer <span class="op">=</span> OneHotEncoder(drop<span class="op">=</span><span class="st">"if_binary"</span>, dtype<span class="op">=</span><span class="bu">int</span>)</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>preprocessor <span class="op">=</span> make_column_transformer(</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>    (numeric_transformer, numeric_features),</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>    (categorical_transformer, categorical_features),</span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>    (binary_transformer, binary_features),</span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>    (<span class="st">"drop"</span>, drop_features),</span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>We separate features into numerical and categorical types because they require different types of transformations. We apply one-hot encoding on the categorical features and standard scaling on the numerical features. In this project, we will approach different methods and employ different models. One of such models is a logistic regression model.</p>
+<p>Below is a helper function to make calculating validation scores easier:</p>
+<div id="a3c559a2" class="cell" data-execution_count="8">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> mean_std_cross_val_scores(model, X_train, y_train, scoring, <span class="op">**</span>kwargs):</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="co">    Returns mean and std of cross validation</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="co">    Parameters</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="co">    ----------</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="co">    model :</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="co">        scikit-learn model</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a><span class="co">    X_train : numpy array or pandas DataFrame</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a><span class="co">        X in the training data</span></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a><span class="co">    y_train :</span></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a><span class="co">        y in the training data</span></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a><span class="co">    Returns</span></span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a><span class="co">    ----------</span></span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a><span class="co">        pandas Series with mean scores from cross_validation</span></span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> scoring <span class="op">==</span> <span class="st">"f1"</span>:</span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>        scores <span class="op">=</span> cross_validate(model, X_train, y_train, scoring <span class="op">=</span> <span class="st">"f1"</span>, <span class="op">**</span>kwargs)</span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>        mean_scores <span class="op">=</span> pd.DataFrame(scores).mean()</span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>        std_scores <span class="op">=</span> pd.DataFrame(scores).std()</span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>        out_col <span class="op">=</span> []</span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="bu">len</span>(mean_scores)):</span>
+<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a>            out_col.append((<span class="ss">f"%0.3f (+/- %0.3f)"</span> <span class="op">%</span> (mean_scores[i], std_scores[i])))</span>
+<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> pd.Series(data<span class="op">=</span>out_col, index<span class="op">=</span>mean_scores.index)</span>
+<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>:</span>
+<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a>        scores <span class="op">=</span> cross_validate(model, X_train, y_train, <span class="op">**</span>kwargs)</span>
+<span id="cb7-30"><a href="#cb7-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-31"><a href="#cb7-31" aria-hidden="true" tabindex="-1"></a>        mean_scores <span class="op">=</span> pd.DataFrame(scores).mean()</span>
+<span id="cb7-32"><a href="#cb7-32" aria-hidden="true" tabindex="-1"></a>        std_scores <span class="op">=</span> pd.DataFrame(scores).std()</span>
+<span id="cb7-33"><a href="#cb7-33" aria-hidden="true" tabindex="-1"></a>        out_col <span class="op">=</span> []</span>
+<span id="cb7-34"><a href="#cb7-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-35"><a href="#cb7-35" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="bu">len</span>(mean_scores)):</span>
+<span id="cb7-36"><a href="#cb7-36" aria-hidden="true" tabindex="-1"></a>        out_col.append((<span class="ss">f"%0.3f (+/- %0.3f)"</span> <span class="op">%</span> (mean_scores[i], std_scores[i])))</span>
+<span id="cb7-37"><a href="#cb7-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-38"><a href="#cb7-38" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> pd.Series(data<span class="op">=</span>out_col, index<span class="op">=</span>mean_scores.index)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+<section id="linear-models" class="level3">
+<h3 class="anchored" data-anchor-id="linear-models">Linear models:</h3>
+<div id="32c50866" class="cell" data-execution_count="9">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>results_dict <span class="op">=</span> {}</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>C_vals <span class="op">=</span> <span class="fl">10.0</span> <span class="op">**</span> np.arange(<span class="op">-</span><span class="dv">2</span>, <span class="dv">2</span>, <span class="fl">0.5</span>)</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> C <span class="kw">in</span> C_vals:</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    lr_pipe <span class="op">=</span> make_pipeline(preprocessor, LogisticRegression(max_iter<span class="op">=</span><span class="dv">1000</span>, C<span class="op">=</span>C))</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>    results_dict[<span class="st">"Logistic Regression with C="</span> <span class="op">+</span> <span class="bu">str</span>(C)] <span class="op">=</span> mean_std_cross_val_scores(</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>        lr_pipe, X_train, y_train, return_train_score<span class="op">=</span><span class="va">True</span>, scoring <span class="op">=</span><span class="st">"accuracy"</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>pd.DataFrame(results_dict)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="9">
+<div>
+<div>
+
+
+<table class="dataframe table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">Logistic Regression with C=0.01</th>
+<th data-quarto-table-cell-role="th">Logistic Regression with C=0.03162277660168379</th>
+<th data-quarto-table-cell-role="th">Logistic Regression with C=0.1</th>
+<th data-quarto-table-cell-role="th">Logistic Regression with C=0.31622776601683794</th>
+<th data-quarto-table-cell-role="th">Logistic Regression with C=1.0</th>
+<th data-quarto-table-cell-role="th">Logistic Regression with C=3.1622776601683795</th>
+<th data-quarto-table-cell-role="th">Logistic Regression with C=10.0</th>
+<th data-quarto-table-cell-role="th">Logistic Regression with C=31.622776601683793</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">fit_time</td>
+<td>0.033 (+/- 0.006)</td>
+<td>0.036 (+/- 0.005)</td>
+<td>0.050 (+/- 0.007)</td>
+<td>0.066 (+/- 0.005)</td>
+<td>0.093 (+/- 0.007)</td>
+<td>0.123 (+/- 0.008)</td>
+<td>0.156 (+/- 0.011)</td>
+<td>0.151 (+/- 0.024)</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">score_time</td>
+<td>0.006 (+/- 0.001)</td>
+<td>0.007 (+/- 0.001)</td>
+<td>0.006 (+/- 0.001)</td>
+<td>0.006 (+/- 0.001)</td>
+<td>0.006 (+/- 0.001)</td>
+<td>0.006 (+/- 0.000)</td>
+<td>0.005 (+/- 0.000)</td>
+<td>0.006 (+/- 0.001)</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">test_score</td>
+<td>0.798 (+/- 0.009)</td>
+<td>0.800 (+/- 0.007)</td>
+<td>0.802 (+/- 0.006)</td>
+<td>0.802 (+/- 0.006)</td>
+<td>0.803 (+/- 0.006)</td>
+<td>0.803 (+/- 0.006)</td>
+<td>0.803 (+/- 0.006)</td>
+<td>0.803 (+/- 0.006)</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">train_score</td>
+<td>0.798 (+/- 0.003)</td>
+<td>0.800 (+/- 0.003)</td>
+<td>0.803 (+/- 0.003)</td>
+<td>0.803 (+/- 0.002)</td>
+<td>0.804 (+/- 0.002)</td>
+<td>0.804 (+/- 0.002)</td>
+<td>0.804 (+/- 0.002)</td>
+<td>0.804 (+/- 0.002)</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+</div>
+<p>From the above observations, we can conclude that changing C values after a specific threshold does not affect the training scores. Thus, we should try optimizing a different hyperparameter or try using another model and optimize it to get a better model.</p>
+<p>Therefore, we try using another model with a different estimator. Since linear models seemed to be at its limit, we can improve our results by exploring the use of non-linear estimators and evaluating their effectiveness.</p>
+</section>
+<section id="non-linear-models" class="level3">
+<h3 class="anchored" data-anchor-id="non-linear-models">Non-linear models:</h3>
+<div id="60f1535f" class="cell" data-execution_count="10">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>results_dict <span class="op">=</span> {}</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>models <span class="op">=</span> {</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Decision Trees"</span>: DecisionTreeClassifier(random_state<span class="op">=</span><span class="dv">111</span>),</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">"kNN"</span>: KNeighborsClassifier(),</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Random Forest"</span>: RandomForestClassifier(n_jobs<span class="op">=-</span><span class="dv">1</span>, n_estimators<span class="op">=</span><span class="dv">100</span>, random_state <span class="op">=</span> <span class="dv">111</span>)</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> x <span class="kw">in</span> models:</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> y <span class="kw">in</span> [<span class="st">"accuracy"</span>, <span class="st">"f1"</span>]:</span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>        pipe <span class="op">=</span> make_pipeline(preprocessor, models[x])</span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>        results_dict[x <span class="op">+</span> <span class="st">" "</span> <span class="op">+</span> <span class="bu">str</span>(y)] <span class="op">=</span> mean_std_cross_val_scores(</span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>            pipe, X_train, y_train, return_train_score<span class="op">=</span><span class="va">True</span>, scoring <span class="op">=</span> y)</span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>pd.DataFrame(results_dict)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="10">
+<div>
+<div>
+
+
+<table class="dataframe table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">Decision Trees accuracy</th>
+<th data-quarto-table-cell-role="th">Decision Trees f1</th>
+<th data-quarto-table-cell-role="th">kNN accuracy</th>
+<th data-quarto-table-cell-role="th">kNN f1</th>
+<th data-quarto-table-cell-role="th">Random Forest accuracy</th>
+<th data-quarto-table-cell-role="th">Random Forest f1</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">fit_time</td>
+<td>0.047 (+/- 0.004)</td>
+<td>0.044 (+/- 0.002)</td>
+<td>0.013 (+/- 0.001)</td>
+<td>0.014 (+/- 0.001)</td>
+<td>1.256 (+/- 1.879)</td>
+<td>0.401 (+/- 0.039)</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">score_time</td>
+<td>0.007 (+/- 0.001)</td>
+<td>0.007 (+/- 0.000)</td>
+<td>0.175 (+/- 0.027)</td>
+<td>0.166 (+/- 0.001)</td>
+<td>0.046 (+/- 0.007)</td>
+<td>0.046 (+/- 0.004)</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">test_score</td>
+<td>0.845 (+/- 0.005)</td>
+<td>0.763 (+/- 0.007)</td>
+<td>0.832 (+/- 0.006)</td>
+<td>0.732 (+/- 0.008)</td>
+<td>0.883 (+/- 0.006)</td>
+<td>0.810 (+/- 0.010)</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">train_score</td>
+<td>0.996 (+/- 0.000)</td>
+<td>0.994 (+/- 0.001)</td>
+<td>0.882 (+/- 0.002)</td>
+<td>0.812 (+/- 0.004)</td>
+<td>0.996 (+/- 0.000)</td>
+<td>0.994 (+/- 0.001)</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+</div>
+<p>Based on the mean test scores, Random Forest seems to be performing the best, with an mean test score around 0.883. This is followed by Decision Trees with a score 0.845, and kNN with a score 0.832. Random Forest also have the best f1 score meaning that it can correctly identify both positive and negative examples with the highest accuracy among the rest of the models.</p>
+<p>Given that the Random Forest model is the most effective among other models, we will focus on optimizing its hyperparameters to improve its performance.</p>
+</section>
+<section id="optimization" class="level3">
+<h3 class="anchored" data-anchor-id="optimization">Optimization:</h3>
+<p>We will look to optimize the hyperparameters max_depth, n_estimators and class_weight. We will use random search, an automated technique to find the best set of hyperparameters.</p>
+<div id="38f843d4" class="cell" data-execution_count="11">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>rf <span class="op">=</span> RandomForestClassifier(n_jobs<span class="op">=-</span><span class="dv">1</span>, random_state<span class="op">=</span><span class="dv">111</span>)</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>ac_search_results <span class="op">=</span> []</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>best_accuracy <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>best_accuracy_params <span class="op">=</span> []</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>f1_search_results <span class="op">=</span>[]</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>best_f1 <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>best_f1_params <span class="op">=</span> []</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>param_grid <span class="op">=</span> {<span class="st">"randomforestclassifier__max_depth"</span>: [<span class="dv">10</span>, <span class="dv">20</span>, <span class="dv">30</span>, <span class="dv">40</span>, <span class="dv">50</span>],</span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>             <span class="st">"randomforestclassifier__n_estimators"</span>: [<span class="dv">50</span>, <span class="dv">100</span>, <span class="dv">200</span>, <span class="dv">250</span>, <span class="dv">300</span>],</span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>             <span class="st">"randomforestclassifier__class_weight"</span>: [<span class="va">None</span>, {<span class="dv">0</span>:<span class="dv">1</span>, <span class="dv">1</span>:<span class="dv">3</span>},<span class="st">'balanced'</span>]}</span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>pipe <span class="op">=</span> make_pipeline(preprocessor, rf)</span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>random_search <span class="op">=</span> RandomizedSearchCV(</span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>    pipe, param_grid, cv<span class="op">=</span><span class="dv">5</span>, return_train_score<span class="op">=</span><span class="va">True</span>, n_iter<span class="op">=</span><span class="dv">15</span>, random_state<span class="op">=</span><span class="dv">111</span></span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a>random_search.fit(X_train, y_train)</span>
+<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> x <span class="kw">in</span> [<span class="st">"accuracy"</span>, <span class="st">"f1"</span>]:</span>
+<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a>    pipe <span class="op">=</span> make_pipeline(preprocessor, rf)</span>
+<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a>    random_search <span class="op">=</span> RandomizedSearchCV(</span>
+<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a>        pipe, param_grid, cv<span class="op">=</span><span class="dv">5</span>, return_train_score<span class="op">=</span><span class="va">True</span>, n_iter<span class="op">=</span><span class="dv">15</span>, random_state<span class="op">=</span><span class="dv">111</span>, scoring <span class="op">=</span> x</span>
+<span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb10-24"><a href="#cb10-24" aria-hidden="true" tabindex="-1"></a>    random_search.fit(X_train, y_train)</span>
+<span id="cb10-25"><a href="#cb10-25" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> x <span class="op">==</span> <span class="st">"accuracy"</span>:</span>
+<span id="cb10-26"><a href="#cb10-26" aria-hidden="true" tabindex="-1"></a>        ac_search_results <span class="op">=</span> pd.DataFrame(random_search.cv_results_)</span>
+<span id="cb10-27"><a href="#cb10-27" aria-hidden="true" tabindex="-1"></a>        best_accuracy <span class="op">=</span> random_search.best_score_</span>
+<span id="cb10-28"><a href="#cb10-28" aria-hidden="true" tabindex="-1"></a>        best_accuracy_params <span class="op">=</span> random_search.best_params_</span>
+<span id="cb10-29"><a href="#cb10-29" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>:</span>
+<span id="cb10-30"><a href="#cb10-30" aria-hidden="true" tabindex="-1"></a>        f1_search_results <span class="op">=</span> pd.DataFrame(random_search.cv_results_)</span>
+<span id="cb10-31"><a href="#cb10-31" aria-hidden="true" tabindex="-1"></a>        best_f1 <span class="op">=</span> random_search.best_score_</span>
+<span id="cb10-32"><a href="#cb10-32" aria-hidden="true" tabindex="-1"></a>        best_f1_params <span class="op">=</span> random_search.best_params_</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div id="b331ac28" class="cell" data-execution_count="12">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(best_accuracy_params, best_accuracy)</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(best_f1_params, best_f1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>{'randomforestclassifier__n_estimators': 250, 'randomforestclassifier__max_depth': 50, 'randomforestclassifier__class_weight': 'balanced'} 0.8844426939740055
+{'randomforestclassifier__n_estimators': 200, 'randomforestclassifier__max_depth': 20, 'randomforestclassifier__class_weight': {0: 1, 1: 3}} 0.8158630987451104</code></pre>
+</div>
+</div>
+<p>At first glance, the accuracy is more improved than the what we got intially. Also, the f1 increased slightly. The best f1 params and accuracy params differ by just the class weight. Looking at the f1_search_results and ac_search_ results, the difference between the accuracies and f1 scores between these two params is trivial for both optimum parameters. Therefore, we pick the best f1 params as the accuracy score (for best f1 params) is slightly lower than its best score. Also, we can afford to lose a very small accuracy score for a better f1 score. Moreover, using lower n_estimators will make fitting faster.</p>
+<p><strong>Therefore, the final optimized model:</strong> <code>RandomForestClassifier(n_estimators = 200, max_depth=20, class_weight = {0: 1, 1: 3})</code></p>
+</section>
+<section id="feature-importances-and-selection" class="level3">
+<h3 class="anchored" data-anchor-id="feature-importances-and-selection">Feature importances and selection:</h3>
+<p>An important part of this project involved creating and transforming the features used in our model, given a rather large amount of raw data. First, we need to find which features are important to the model. Then, we will use feature selection to select specific features to make our model simpler and better.</p>
+<section id="feature-importances" class="level4">
+<h4 class="anchored" data-anchor-id="feature-importances">Feature importances:</h4>
+<p>We will use eli5 to view which features are important.</p>
+<div id="8db9aa22" class="cell" data-execution_count="13">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>X_train_pp <span class="op">=</span> preprocessor.fit_transform(X_train)</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>column_names <span class="op">=</span> numeric_features <span class="op">+</span> <span class="bu">list</span>(</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>    preprocessor.named_transformers_[<span class="st">"onehotencoder-1"</span>].get_feature_names_out(categorical_features)) <span class="op">+</span> <span class="bu">list</span>(</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>    preprocessor.named_transformers_[<span class="st">"onehotencoder-2"</span>].get_feature_names_out(binary_features))</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>pipe_rf <span class="op">=</span> make_pipeline(preprocessor, RandomForestClassifier(n_estimators <span class="op">=</span> <span class="dv">200</span>, max_depth<span class="op">=</span><span class="dv">20</span>, n_jobs<span class="op">=-</span><span class="dv">1</span>, random_state<span class="op">=</span><span class="dv">111</span>, class_weight <span class="op">=</span> {<span class="dv">0</span>: <span class="dv">1</span>, <span class="dv">1</span>: <span class="dv">3</span>}))</span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>pipe_rf.fit(X_train, y_train)</span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>eli5.explain_weights(pipe_rf.named_steps[<span class="st">"randomforestclassifier"</span>], feature_names<span class="op">=</span>column_names)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="13">
+<div>
+
+    <style>
+    table.eli5-weights tr:hover {
+        filter: brightness(85%);
+    }
+</style>
+
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+    
+
+    
+
+    
+
+    
+
+    
+        
+<table class="eli5-weights eli5-feature-importances table table-sm table-striped small" data-quarto-postprocess="true">
+<thead>
+<tr class="header" style="border: none;">
+<th data-quarto-table-cell-role="th" style="text-align: right; padding: 0 1em 0 0.5em; border: none;">Weight</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; padding: 0 0.5em 0 0.5em; border: none;">Feature</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd" style="background-color: hsl(120, 100.00%, 80.00%); border: none;">
+<td style="text-align: right; padding: 0 1em 0 0.5em; border: none;">0.3301 ± 0.0448</td>
+<td style="text-align: left; padding: 0 0.5em 0 0.5em; border: none;">lead_time</td>
+</tr>
+<tr class="even" style="background-color: hsl(120, 100.00%, 87.79%); border: none;">
+<td style="text-align: right; padding: 0 1em 0 0.5em; border: none;">0.1631 ± 0.0372</td>
+<td style="text-align: left; padding: 0 0.5em 0 0.5em; border: none;">avg_price_per_room</td>
+</tr>
+<tr class="odd" style="background-color: hsl(120, 100.00%, 89.57%); border: none;">
+<td style="text-align: right; padding: 0 1em 0 0.5em; border: none;">0.1301 ± 0.0478</td>
+<td style="text-align: left; padding: 0 0.5em 0 0.5em; border: none;">no_of_special_requests</td>
+</tr>
+<tr class="even" style="background-color: hsl(120, 100.00%, 91.11%); border: none;">
+<td style="text-align: right; padding: 0 1em 0 0.5em; border: none;">0.1037 ± 0.0224</td>
+<td style="text-align: left; padding: 0 0.5em 0 0.5em; border: none;">arrival_month</td>
+</tr>
+<tr class="odd" style="background-color: hsl(120, 100.00%, 94.01%); border: none;">
+<td style="text-align: right; padding: 0 1em 0 0.5em; border: none;">0.0589 ± 0.0154</td>
+<td style="text-align: left; padding: 0 0.5em 0 0.5em; border: none;">no_of_week_nights</td>
+</tr>
+<tr class="even" style="background-color: hsl(120, 100.00%, 95.15%); border: none;">
+<td style="text-align: right; padding: 0 1em 0 0.5em; border: none;">0.0436 ± 0.0147</td>
+<td style="text-align: left; padding: 0 0.5em 0 0.5em; border: none;">no_of_weekend_nights</td>
+</tr>
+<tr class="odd" style="background-color: hsl(120, 100.00%, 95.74%); border: none;">
+<td style="text-align: right; padding: 0 1em 0 0.5em; border: none;">0.0362 ± 0.0483</td>
+<td style="text-align: left; padding: 0 0.5em 0 0.5em; border: none;">market_segment_type_1</td>
+</tr>
+<tr class="even" style="background-color: hsl(120, 100.00%, 96.73%); border: none;">
+<td style="text-align: right; padding: 0 1em 0 0.5em; border: none;">0.0249 ± 0.0128</td>
+<td style="text-align: left; padding: 0 0.5em 0 0.5em; border: none;">no_of_adults</td>
+</tr>
+<tr class="odd" style="background-color: hsl(120, 100.00%, 96.93%); border: none;">
+<td style="text-align: right; padding: 0 1em 0 0.5em; border: none;">0.0227 ± 0.0348</td>
+<td style="text-align: left; padding: 0 0.5em 0 0.5em; border: none;">market_segment_type_0</td>
+</tr>
+<tr class="even" style="background-color: hsl(120, 100.00%, 98.00%); border: none;">
+<td style="text-align: right; padding: 0 1em 0 0.5em; border: none;">0.0123 ± 0.0060</td>
+<td style="text-align: left; padding: 0 0.5em 0 0.5em; border: none;">required_car_parking_space_1</td>
+</tr>
+<tr class="odd" style="background-color: hsl(120, 100.00%, 98.45%); border: none;">
+<td style="text-align: right; padding: 0 1em 0 0.5em; border: none;">0.0085 ± 0.0061</td>
+<td style="text-align: left; padding: 0 0.5em 0 0.5em; border: none;">type_of_meal_plan_0</td>
+</tr>
+<tr class="even" style="background-color: hsl(120, 100.00%, 98.48%); border: none;">
+<td style="text-align: right; padding: 0 1em 0 0.5em; border: none;">0.0083 ± 0.0047</td>
+<td style="text-align: left; padding: 0 0.5em 0 0.5em; border: none;">no_of_children</td>
+</tr>
+<tr class="odd" style="background-color: hsl(120, 100.00%, 98.48%); border: none;">
+<td style="text-align: right; padding: 0 1em 0 0.5em; border: none;">0.0083 ± 0.0130</td>
+<td style="text-align: left; padding: 0 0.5em 0 0.5em; border: none;">type_of_meal_plan_2</td>
+</tr>
+<tr class="even" style="background-color: hsl(120, 100.00%, 98.49%); border: none;">
+<td style="text-align: right; padding: 0 1em 0 0.5em; border: none;">0.0082 ± 0.0055</td>
+<td style="text-align: left; padding: 0 0.5em 0 0.5em; border: none;">room_type_reserved_0</td>
+</tr>
+<tr class="odd" style="background-color: hsl(120, 100.00%, 98.57%); border: none;">
+<td style="text-align: right; padding: 0 1em 0 0.5em; border: none;">0.0076 ± 0.0152</td>
+<td style="text-align: left; padding: 0 0.5em 0 0.5em; border: none;">market_segment_type_2</td>
+</tr>
+<tr class="even" style="background-color: hsl(120, 100.00%, 98.61%); border: none;">
+<td style="text-align: right; padding: 0 1em 0 0.5em; border: none;">0.0073 ± 0.0054</td>
+<td style="text-align: left; padding: 0 0.5em 0 0.5em; border: none;">room_type_reserved_1</td>
+</tr>
+<tr class="odd" style="background-color: hsl(120, 100.00%, 98.65%); border: none;">
+<td style="text-align: right; padding: 0 1em 0 0.5em; border: none;">0.0070 ± 0.0078</td>
+<td style="text-align: left; padding: 0 0.5em 0 0.5em; border: none;">type_of_meal_plan_1</td>
+</tr>
+<tr class="even" style="background-color: hsl(120, 100.00%, 98.93%); border: none;">
+<td style="text-align: right; padding: 0 1em 0 0.5em; border: none;">0.0050 ± 0.0140</td>
+<td style="text-align: left; padding: 0 0.5em 0 0.5em; border: none;">no_of_previous_bookings_not_canceled</td>
+</tr>
+<tr class="odd" style="background-color: hsl(120, 100.00%, 99.01%); border: none;">
+<td style="text-align: right; padding: 0 1em 0 0.5em; border: none;">0.0045 ± 0.0117</td>
+<td style="text-align: left; padding: 0 0.5em 0 0.5em; border: none;">repeated_guest_1</td>
+</tr>
+<tr class="even" style="background-color: hsl(120, 100.00%, 99.37%); border: none;">
+<td style="text-align: right; padding: 0 1em 0 0.5em; border: none;">0.0024 ± 0.0022</td>
+<td style="text-align: left; padding: 0 0.5em 0 0.5em; border: none;">room_type_reserved_2</td>
+</tr>
+<tr class="odd" style="background-color: hsl(120, 100.00%, 99.37%); border: none;">
+<td colspan="2" style="text-align: center; padding: 0 0.5em 0 0.5em; border: none; white-space: nowrap;"><em>… 8 more …</em></td>
+</tr>
+</tbody>
+</table>
+
+    
+
+    
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+
+</div>
+</div>
+</div>
+<p>From the table: * lead_time, avg_price_per_room, no_of_special_requests and arrival month have the highest weight among all the features(&gt;0.1). * no_of_week_nights, no_of_weekend_nights , market_segment_type_1, and no_of_adults have moderate to low weight. * The rest of the features have very low to no weight. * lead_time is the most important feature, followed by avg_price_per_room and no_of_special_requests.</p>
+<div id="40364a31" class="cell" data-execution_count="14">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>pp_df <span class="op">=</span> pd.DataFrame(X_train_pp, columns<span class="op">=</span>column_names)</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>rf_explainer <span class="op">=</span> shap.TreeExplainer(pipe_rf.named_steps[<span class="st">"randomforestclassifier"</span>])</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>train_rf_shap_values <span class="op">=</span> rf_explainer.shap_values(pp_df.sample(n<span class="op">=</span><span class="dv">1000</span>, random_state <span class="op">=</span> <span class="dv">111</span>)) <span class="co"># choosing only 1000 samples c</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div id="9b059246" class="cell" data-execution_count="15">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>shap.summary_plot(train_rf_shap_values[<span class="dv">1</span>], pp_df.sample(n<span class="op">=</span><span class="dv">1000</span>, random_state <span class="op">=</span> <span class="dv">111</span>))</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>shap.dependence_plot(<span class="st">"lead_time"</span>, train_rf_shap_values[<span class="dv">1</span>], pp_df.sample(n<span class="op">=</span><span class="dv">1000</span>, random_state <span class="op">=</span> <span class="dv">111</span>))</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>shap.dependence_plot(<span class="st">"avg_price_per_room"</span>, train_rf_shap_values[<span class="dv">1</span>], pp_df.sample(n<span class="op">=</span><span class="dv">1000</span>, random_state <span class="op">=</span> <span class="dv">111</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stderr">
+<pre><code>No data for colormapping provided via 'c'. Parameters 'vmin', 'vmax' will be ignored</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="index_files/figure-html/cell-15-output-2.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="index_files/figure-html/cell-15-output-3.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="index_files/figure-html/cell-15-output-4.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p><strong>Insights summary</strong>:</p>
+<ul>
+<li><p><strong>First plot</strong>: The analysis reveals a strong correlation between lead_time values and the corresponding shap values. High lead_time values tend to have high shap values, while low lead_time values are associated with low shap values. This indicates that high lead_times are more likely to predict the outcome 1, whereas lower lead_times are more likely to predict 0. Similarly, for the no_of_special_requests feature, it is observed that high values tend to have low shap values, indicating that high no_of_special_requests are more likely to predict 0, while lower values are more likely to predict 1. Additionally, the analysis shows a similar pattern for the avg_price_per_room feature. High avg_price_per_room values have high shap values, indicating a higher likelihood of predicting 1, whereas low avg_price_per_room values have low shap values, suggesting a higher likelihood of predicting 0. Furthermore, the required_car_parking_space_1 feature has low shap values for high values, meaning that high required_car_parking_space_1 values are more likely to predict 1, while lower values are more likely to predict 0.</p></li>
+<li><p><strong>Second plot</strong>: The majority of data points in the graph correspond to market_segment_type_1. Additionally, there is a positive relationship between the lead_time values and their respective shap values, suggesting that as lead_time increases, so does its impact on the prediction. Non-market_segment_type_1 data points are mostly concentrated near the bottom of the graph, with a few outliers at the top.</p></li>
+<li><p><strong>Third plot</strong>: The graph indicates a mixed proportion of high and low lead_time values among the data points. Moreover, there is a positive correlation between the avg_price_per_room values and their corresponding shap values, indicating that higher avg_price_per_room values have a greater impact on the prediction.</p></li>
+</ul>
+</section>
+<section id="feature-selection" class="level4">
+<h4 class="anchored" data-anchor-id="feature-selection">Feature selection:</h4>
+<p>We will use RFECV to select the number of features to use in our model. It uses cross-validation to select number of features.</p>
+<div id="6ef1ebc3" class="cell" data-execution_count="16">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> RandomForestClassifier(n_estimators <span class="op">=</span> <span class="dv">200</span>, max_depth<span class="op">=</span><span class="dv">20</span>, class_weight <span class="op">=</span> {<span class="dv">0</span>: <span class="dv">1</span>, <span class="dv">1</span>: <span class="dv">3</span>})</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>rfe_cv <span class="op">=</span> RFECV(model, cv<span class="op">=</span><span class="dv">10</span>,n_jobs<span class="op">=-</span><span class="dv">1</span>)</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>rfe_cv.fit(X_train_pp, y_train)</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'Original number of features:'</span>, X_train_pp.shape[<span class="dv">1</span>])</span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'Number of selected features:'</span>, <span class="bu">sum</span>(rfe_cv.support_), <span class="st">'</span><span class="ch">\n\n</span><span class="st">'</span>)</span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Selected features: "</span>, np.array(column_names)[rfe_cv.support_])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Original number of features: 28
+Number of selected features: 23 
+
+
+Selected features:  ['no_of_adults' 'no_of_children' 'no_of_weekend_nights'
+ 'no_of_week_nights' 'lead_time' 'no_of_previous_bookings_not_canceled'
+ 'avg_price_per_room' 'no_of_special_requests' 'arrival_month'
+ 'type_of_meal_plan_0' 'type_of_meal_plan_1' 'type_of_meal_plan_2'
+ 'room_type_reserved_0' 'room_type_reserved_1' 'room_type_reserved_2'
+ 'room_type_reserved_3' 'room_type_reserved_4' 'market_segment_type_0'
+ 'market_segment_type_1' 'market_segment_type_2' 'market_segment_type_4'
+ 'required_car_parking_space_1' 'repeated_guest_1']</code></pre>
+</div>
+</div>
+<p>As seen from the results, we have managed to reduce the number of features considerably (by half). Next, we will use this to check whether our model has improved or how much it improved.</p>
+<div id="2fea56bf" class="cell" data-scrolled="true" data-execution_count="17">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>new_train <span class="op">=</span> rfe_cv.transform(X_train_pp)</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'accuracy scores:</span><span class="ch">\n</span><span class="st"> </span><span class="ch">\n</span><span class="st">'</span>, mean_std_cross_val_scores(</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>    model, new_train, y_train, return_train_score<span class="op">=</span><span class="va">True</span>, scoring <span class="op">=</span><span class="st">"accuracy"</span></span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>),<span class="st">'</span><span class="ch">\n</span><span class="st"> </span><span class="ch">\n</span><span class="st">'</span>,<span class="st">'f1 scores:</span><span class="ch">\n</span><span class="st"> </span><span class="ch">\n</span><span class="st">'</span>, mean_std_cross_val_scores(</span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>    model, new_train, y_train, return_train_score<span class="op">=</span><span class="va">True</span>, scoring <span class="op">=</span><span class="st">"f1"</span></span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>accuracy scores:
+ 
+ fit_time       1.500 (+/- 0.030)
+score_time     0.079 (+/- 0.001)
+test_score     0.883 (+/- 0.004)
+train_score    0.978 (+/- 0.001)
+dtype: object 
+ 
+ f1 scores:
+ 
+ fit_time       1.540 (+/- 0.065)
+score_time     0.082 (+/- 0.003)
+test_score     0.814 (+/- 0.008)
+train_score    0.968 (+/- 0.003)
+dtype: object</code></pre>
+</div>
+</div>
+<p>The accuracy scores and f1 scores increased very slightly but it is still a major improvement since our model is much simpler and considers lower parameters.</p>
+<p>We have a proper model and have selected important features to train our model. Now, we will check how the model works on unseen datasets.</p>
+</section>
+</section>
+</section>
+<section id="results" class="level2">
+<h2 class="anchored" data-anchor-id="results">Results:</h2>
+<div id="93a55d7d" class="cell" data-execution_count="18">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>model.fit(new_train,y_train)</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>new_test <span class="op">=</span> preprocessor.transform(X_test)</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>new_test <span class="op">=</span> rfe_cv.transform(new_test)</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>accuracy_testscore <span class="op">=</span> model.score(new_test, y_test)</span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>f1_testscore <span class="op">=</span> f1_score(y_test, model.predict(new_test))</span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Accuracy: "</span> <span class="op">+</span> <span class="bu">str</span>(accuracy_testscore))</span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"F1 score: "</span> <span class="op">+</span> <span class="bu">str</span>(f1_testscore))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Accuracy: 0.8857037853730246
+F1 score: 0.826740947075209</code></pre>
+</div>
+</div>
+<p>From the train and test scores above: * It has good test scores meaning it effectively classifies the data into their respective classes. * The test scores agree with the validation scores from before. * The test values are overfit. The predictions have high variance among them but low bias. * The difference in train/test value means the model might not generalize well to new unseen data.</p>
+<section id="model-caveats" class="level3">
+<h3 class="anchored" data-anchor-id="model-caveats">Model caveats:</h3>
+<p>Throughout the project, the models created and methods used might not be best and the following results might not be perfect. Having said that, the following caveats can be inferred:</p>
+<ul>
+<li>Generalizability: The significant difference between train accuracy/F1 score and test F1 accuracy/F1 score means that the model could be overfitting the training data. As a result, it might not generalize well to unseen data. This is mainly due to the fact we are using an ensemble model and other steps we took to optimize it such as RFECV, random search.</li>
+<li>Suboptimal search results: Using grid search instead of random search could have provided better performing parameters since it is an exhaustive search. The hyperparameters found might be suboptimal compared to what we could have found using grid search.</li>
+<li>Time series relationships: The relationship between the features and booking_status can change across the years/different dates. Since we did not consider time series analysis, we might have missed underlying patterns in the data, resulting in suboptimal model performance.</li>
+<li>Complexity: Since we used an ensemble model, the model is complex and requires high computational power. Therefore, it is harder to understand or interpret the model, and its training time is also higher than usual.</li>
+<li>Non-important features: RFECV might not have identified all the redundant features, which can increase model complexity and negatively impact the its performance.</li>
+</ul>
+<p>Overall, the model still works as an useful tool to assist the hotel owners in better understanding whether a customer will honor the reservation or cancel it. Although the model is far from perfect, it can always be improved or further optimized. Training the model with new data sets occasionally will also improve the models performance in making informed decisions about managing hotel reservations.</p>
+<p><br><br></p>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const disableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'prefetch';
+    }
+  }
+  const enableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'stylesheet';
+    }
+  }
+  const manageTransitions = (selector, allowTransitions) => {
+    const els = window.document.querySelectorAll(selector);
+    for (let i=0; i < els.length; i++) {
+      const el = els[i];
+      if (allowTransitions) {
+        el.classList.remove('notransition');
+      } else {
+        el.classList.add('notransition');
+      }
+    }
+  }
+  const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+    const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+    const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+    let newTheme = '';
+    if(darkModeDefault) {
+      newTheme = isAlternate ? baseTheme : alternateTheme;
+    } else {
+      newTheme = isAlternate ? alternateTheme : baseTheme;
+    }
+    const changeGiscusTheme = () => {
+      // From: https://github.com/giscus/giscus/issues/336
+      const sendMessage = (message) => {
+        const iframe = document.querySelector('iframe.giscus-frame');
+        if (!iframe) return;
+        iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+      }
+      sendMessage({
+        setConfig: {
+          theme: newTheme
+        }
+      });
+    }
+    const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+    if (isGiscussLoaded) {
+      changeGiscusTheme();
+    }
+  }
+  const toggleColorMode = (alternate) => {
+    // Switch the stylesheets
+    const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+    manageTransitions('#quarto-margin-sidebar .nav-link', false);
+    if (alternate) {
+      enableStylesheet(alternateStylesheets);
+      for (const sheetNode of alternateStylesheets) {
+        if (sheetNode.id === "quarto-bootstrap") {
+          toggleBodyColorMode(sheetNode);
+        }
+      }
+    } else {
+      disableStylesheet(alternateStylesheets);
+      toggleBodyColorPrimary();
+    }
+    manageTransitions('#quarto-margin-sidebar .nav-link', true);
+    // Switch the toggles
+    const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+    for (let i=0; i < toggles.length; i++) {
+      const toggle = toggles[i];
+      if (toggle) {
+        if (alternate) {
+          toggle.classList.add("alternate");     
+        } else {
+          toggle.classList.remove("alternate");
+        }
+      }
+    }
+    // Hack to workaround the fact that safari doesn't
+    // properly recolor the scrollbar when toggling (#1455)
+    if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+      manageTransitions("body", false);
+      window.scrollTo(0, 1);
+      setTimeout(() => {
+        window.scrollTo(0, 0);
+        manageTransitions("body", true);
+      }, 40);  
+    }
+  }
+  const isFileUrl = () => { 
+    return window.location.protocol === 'file:';
+  }
+  const hasAlternateSentinel = () => {  
+    let styleSentinel = getColorSchemeSentinel();
+    if (styleSentinel !== null) {
+      return styleSentinel === "alternate";
+    } else {
+      return false;
+    }
+  }
+  const setStyleSentinel = (alternate) => {
+    const value = alternate ? "alternate" : "default";
+    if (!isFileUrl()) {
+      window.localStorage.setItem("quarto-color-scheme", value);
+    } else {
+      localAlternateSentinel = value;
+    }
+  }
+  const getColorSchemeSentinel = () => {
+    if (!isFileUrl()) {
+      const storageValue = window.localStorage.getItem("quarto-color-scheme");
+      return storageValue != null ? storageValue : localAlternateSentinel;
+    } else {
+      return localAlternateSentinel;
+    }
+  }
+  const darkModeDefault = false;
+  let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+  // Dark / light mode switch
+  window.quartoToggleColorScheme = () => {
+    // Read the current dark / light value 
+    let toAlternate = !hasAlternateSentinel();
+    toggleColorMode(toAlternate);
+    setStyleSentinel(toAlternate);
+    toggleGiscusIfUsed(toAlternate, darkModeDefault);
+  };
+  // Ensure there is a toggle, if there isn't float one in the top right
+  if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+    const a = window.document.createElement('a');
+    a.classList.add('top-right');
+    a.classList.add('quarto-color-scheme-toggle');
+    a.href = "";
+    a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+    const i = window.document.createElement("i");
+    i.classList.add('bi');
+    a.appendChild(i);
+    window.document.body.appendChild(a);
+  }
+  // Switch to dark mode if need be
+  if (hasAlternateSentinel()) {
+    toggleColorMode(true);
+  } else {
+    toggleColorMode(false);
+  }
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  const viewSource = window.document.getElementById('quarto-view-source') ||
+                     window.document.getElementById('quarto-code-tools-source');
+  if (viewSource) {
+    const sourceUrl = viewSource.getAttribute("data-quarto-source-url");
+    viewSource.addEventListener("click", function(e) {
+      if (sourceUrl) {
+        // rstudio viewer pane
+        if (/\bcapabilities=\b/.test(window.location)) {
+          window.open(sourceUrl);
+        } else {
+          window.location.href = sourceUrl;
+        }
+      } else {
+        const modal = new bootstrap.Modal(document.getElementById('quarto-embedded-source-code-modal'));
+        modal.show();
+      }
+      return false;
+    });
+  }
+  function toggleCodeHandler(show) {
+    return function(e) {
+      const detailsSrc = window.document.querySelectorAll(".cell > details > .sourceCode");
+      for (let i=0; i<detailsSrc.length; i++) {
+        const details = detailsSrc[i].parentElement;
+        if (show) {
+          details.open = true;
+        } else {
+          details.removeAttribute("open");
+        }
+      }
+      const cellCodeDivs = window.document.querySelectorAll(".cell > .sourceCode");
+      const fromCls = show ? "hidden" : "unhidden";
+      const toCls = show ? "unhidden" : "hidden";
+      for (let i=0; i<cellCodeDivs.length; i++) {
+        const codeDiv = cellCodeDivs[i];
+        if (codeDiv.classList.contains(fromCls)) {
+          codeDiv.classList.remove(fromCls);
+          codeDiv.classList.add(toCls);
+        } 
+      }
+      return false;
+    }
+  }
+  const hideAllCode = window.document.getElementById("quarto-hide-all-code");
+  if (hideAllCode) {
+    hideAllCode.addEventListener("click", toggleCodeHandler(false));
+  }
+  const showAllCode = window.document.getElementById("quarto-show-all-code");
+  if (showAllCode) {
+    showAllCode.addEventListener("click", toggleCodeHandler(true));
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

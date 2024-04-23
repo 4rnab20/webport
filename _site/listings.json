@@ -2,8 +2,9 @@
   {
     "listing": "/project.html",
     "items": [
-      "/posts/post-with-code/index.html",
-      "/posts/welcome/index.html"
+      "/posts/diabetes/index.html",
+      "/posts/flagmodel/index.html",
+      "/posts/pulsarstars/index.html"
     ]
   }
 ]
