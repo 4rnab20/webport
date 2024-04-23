@@ -52,7 +52,7 @@ library(cowplot)
 
 #### Loading data:
 
-```{r}
+```{r, message=FALSE, warning = FALSE}
 diabetes <- read.csv("diabetes.csv")
 head(diabetes)
 nrow(diabetes)
@@ -62,7 +62,7 @@ nrow(diabetes)
 
 Missing values can introduce bias in parameter estimates and reduce their precision. Upon observing that several attributes in our dataset contain missing values, we opted to clean the data by removing these rows.
 
-```{r}
+```{r, message=FALSE, warning = FALSE}
 diabetes_clean <- diabetes[!(diabetes$Glucose == 0 | diabetes$BloodPressure == 0 | diabetes$SkinThickness == 0 | diabetes$Insulin == 0 | diabetes$BMI == 0 | diabetes$DiabetesPedigreeFunction == 0 | diabetes$Age == 0), ]
 head(diabetes_clean)
 nrow(diabetes_clean)
@@ -86,7 +86,7 @@ Before delving into specifics, it's essential to examine the overall distributio
 
 According to regression assumptions, multicollinearity among explanatory variables should be avoided. If a multicollinearity problem exists in the dataset, the standard errors of estimated coefficients will be inflated, and coefficient estimates will be unstable, making it difficult to determine variable significance. Additionally, the interpretation of coefficients will be misleading. We can explore the correlation matrix for better insights.
 
-```{r,fig.dim = c(15, 15)}
+```{r,fig.dim = c(15, 15), message=FALSE, warning = FALSE}
 # getting correlation values between variables
 corr_matrix <- diabetes_clean %>%
   dplyr::select(- Outcome) %>%
@@ -135,7 +135,7 @@ Conversely, the correlation between other variables appears to be within accepta
 
 The density plots for the variables in this dataset illustrate the distribution of each variable's values. This visualization helps in understanding the spread, central tendency, and shape of the data for variables such as Pregnancies, Glucose, BloodPressure, Skin Thickness, Insulin, BMI, DiabetesPedigreeFunction, and Age. These plots offer insights into the prevalence and distribution of key factors associated with diabetes diagnosis in the female subjects aged 21 and above.
 
-```{r, fig.dim = c(15, 10)}
+```{r, fig.dim = c(15, 10), message=FALSE, warning = FALSE}
 data_long <- diabetes_clean %>%
   pivot_longer(cols = -Outcome, names_to = "Variable", values_to = "Value")
 
@@ -160,7 +160,7 @@ Age skews right, indicating a younger population. Blood Pressure and BMI are nor
 
 We aim to gain insights into the relationship between each explanatory variable and the response variable before conducting regression analysis. Given the binary nature of the response variable, utilizing boxplots to visualize the relationship between each explanatory variable and the response variable offers a convenient approach.
 
-```{r,fig.dim = c(20, 15)}
+```{r,fig.dim = c(20, 15), message=FALSE, warning = FALSE}
 function_plot <- ggplot(data = diabetes_clean, aes(x = factor(Outcome), y =DiabetesPedigreeFunction, fill = factor(Outcome))) +
   geom_boxplot(colour = "red") +
   labs(title = "DiabetesPedigreeFunction vs. Outcome",
@@ -301,7 +301,7 @@ plot_grid(ggdraw() + draw_label("Diabetes Outcome Across Key Factors", fontface=
 
 -   **Spliting the data into training set and testing set:**
 
-```{r}
+```{r, message=FALSE, warning = FALSE}
 set.seed(123)
 training.samples <- diabetes_clean$Outcome %>%
   createDataPartition(p = 0.7, list = FALSE)
@@ -313,31 +313,31 @@ nrow(diabetes_test)
 
 -   **Fit the full logistic regression model using training dataset:**
 
-```{r}
+```{r, message=FALSE, warning = FALSE}
 full_model <- glm(formula = Outcome ~ ., family = binomial, data = diabetes_train)
 summary(full_model)
 ```
 
 -   **Backward selection based on AIC to get a AIC-selected model:**
 
-```{r}
+```{r, message=FALSE, warning = FALSE}
 AIC_selection <- stepAIC(full_model, method = "backward")
 AIC_selection
 ```
 
-```{r}
+```{r, message=FALSE, warning = FALSE}
 AIC_model <- glm(formula = Outcome ~ DiabetesPedigreeFunction + Age + BMI + Glucose, family = binomial, data = diabetes_train)
 summary(AIC_model)
 ```
 
 -   **Backward selection based on BIC to get a BIC-selected model:**
 
-```{r}
+```{r, message=FALSE, warning = FALSE}
 BIC_selection <- step(full_model, direction = "backward", k = log(nrow(diabetes_clean)), trace = FALSE)
 BIC_selection
 ```
 
-```{r}
+```{r, message=FALSE, warning = FALSE}
 
 BIC_model <- glm(formula = Outcome ~ Age + BMI + Glucose, family = binomial, data = diabetes_train)
 summary(BIC_model)
@@ -345,7 +345,7 @@ summary(BIC_model)
 
 -   **Compute three confusion matrics for full model, AIC-selected model and BIC-selected model seperately:**
 
-```{r}
+```{r, message=FALSE, warning = FALSE}
 diabetes_pred_class_full_model <-
   round(predict(full_model, type = "response"), 0)
 diabetes_confusion_matrix <-
@@ -358,7 +358,7 @@ diabetes_confusion_matrix <-
 diabetes_confusion_matrix
 ```
 
-```{r}
+```{r, message=FALSE, warning = FALSE}
 diabetes_pred_class_AIC_model <-
   round(predict(AIC_model, type = "response"), 0)
 
@@ -372,7 +372,7 @@ diabetes_confusion_matrix_AIC_model <-
 diabetes_confusion_matrix_AIC_model
 ```
 
-```{r}
+```{r, message=FALSE, warning = FALSE}
 diabetes_pred_class_BIC_model <-
   round(predict(BIC_model, type = "response"), 0)
 
@@ -388,7 +388,7 @@ diabetes_confusion_matrix_BIC_model
 
 -   **Get AUC values for these 3 candidate models:**
 
-```{r}
+```{r, message=FALSE, warning = FALSE}
 ROC_full_log <- roc(
   response = diabetes_train$Outcome,
   predictor = predict(full_model, type = "response")
@@ -410,7 +410,7 @@ cat("BIC-selected model AUC value:", ROC_BIC_log$auc)
 
 -   **Using LASSO to get a logistic regression model and compare the prediction performance of LASSO model with those 3 models above.**
 
-```{r}
+```{r, message=FALSE, warning = FALSE}
 model_matrix_X_train <-
     as.matrix(diabetes_train[, -9])
 
@@ -418,7 +418,7 @@ matrix_Y_train <-
     as.matrix(diabetes_train[, 9], ncol = 1)
 ```
 
-```{r}
+```{r, message=FALSE, warning = FALSE}
 #set.seed(271)
 diabetes_cv_lambda_LASSO <-
   cv.glmnet(
@@ -432,14 +432,14 @@ diabetes_cv_lambda_LASSO
 
 ```
 
-```{r}
+```{r, message=FALSE, warning = FALSE}
 
 diabetes_lambda_1se_AUC_LASSO <- round(diabetes_cv_lambda_LASSO$lambda.1se, 4)
 
 diabetes_lambda_1se_AUC_LASSO
 ```
 
-```{r}
+```{r, message=FALSE, warning = FALSE}
 
 diabetes_LASSO_1se_AUC <- glmnet(
   x = model_matrix_X_train, y = matrix_Y_train,
@@ -450,7 +450,7 @@ diabetes_LASSO_1se_AUC <- glmnet(
 coef(diabetes_LASSO_1se_AUC)
 ```
 
-```{r,fig.dim = c(15, 10)}
+```{r,fig.dim = c(15, 10), message=FALSE, warning = FALSE}
 
 ROC_lasso <-
     roc(
@@ -463,7 +463,7 @@ AUC_lasso <- pROC::auc(ROC_lasso)
 
 -   **Compare the AUC values for our 4 candidate models, full model, AIC-selected model, BIC-selected model and LASSO model.**
 
-```{r}
+```{r, message=FALSE, warning = FALSE}
 
 model_names <- c("Full Model", "AIC-selected Model", "BIC-selected Model", "LASSO Model")
 AUC_values <- c(ROC_full_log$auc, ROC_AIC_log$auc, ROC_BIC_log$auc, as.double(AUC_lasso))
@@ -476,7 +476,7 @@ comparison_table
 
 After comparing the AUC values for the four candidate models, we observed that the AIC-selected model had the best prediction performance on the training dataset. Consequently, we determined to adopt the AIC-selected model as our final predictive model. Next, we will assess the out-of-sample performance of our final model by applying it to the testing dataset, thereby generating the ROC curve and computing the corresponding AUC value.
 
-```{r, fig.dim = c(15, 10)}
+```{r, fig.dim = c(15, 10), message=FALSE, warning = FALSE}
 
 options(repr.plot.width = 15, repr.plot.height = 10)
 
