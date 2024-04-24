@@ -9,7 +9,9 @@ listing:
   sort-ui: FALSE
   filter-ui: false
   page-size: 10
-  image-height: "500px"
+  image-height: "540px"
+
+
 page-layout: full
 title-block-banner: true
 grid-item-align: "right"
