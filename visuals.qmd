@@ -1,5 +1,5 @@
 ---
-title: "Visualization"
+title: "Projects"
 listing:
   categories: true
   contents: visuals
