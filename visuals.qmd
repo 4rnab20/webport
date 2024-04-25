@@ -9,7 +9,7 @@ listing:
   sort-ui: FALSE
   filter-ui: false
   page-size: 10
-  image-height: "540px"
+  image-height: "400px"
 
 
 page-layout: full
