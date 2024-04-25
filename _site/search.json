@@ -2,7 +2,7 @@
   {
     "objectID": "project.html",
     "href": "project.html",
-    "title": "Posts",
+    "title": "Projects",
     "section": "",
     "text": "Diabetes Prediction Modeling\n\n\n\n\n\n\nR\n\n\n\n\n\n\n\n\n\nApr 21, 2024\n\n\nArnab Das\n\n\n\n\n\n\n\n\n\n\n\n\nModeling for flagging potential cancellations\n\n\n\n\n\n\npython\n\n\n\n\n\n\n\n\n\nMay 4, 2023\n\n\nArnab Das\n\n\n\n\n\n\n\n\n\n\n\n\nPulsar Star Classification\n\n\n\n\n\n\nR\n\n\n\n\n\n\n\n\n\nMay 1, 2021\n\n\nArnab Das\n\n\n\n\n\n\nNo matching items"
   },
@@ -39,7 +39,7 @@
     "href": "index.html",
     "title": "Arnab Das",
     "section": "",
-    "text": "Data lover 📊, statistics enthusiast 📈, Python 🐍 and R 📊 enthusiast.\n📊 Passionate about data and statistics, I dive deep into the world of analysis and love uncovering insights. With a keen interest in machine learning 🤖, Python 🐍, and R, I’m always exploring new ways to extract meaning from data.\n\n\n“The only way to do great work is to love what you do.*”"
+    "text": "numbers guy 📊 | math & stats nut 📈 | Python 🐍| R 📊 | Optimization ⚙️ |\na passion for numbers and data-driven insights. python and r for mathematical modeling, statistical analysis, and optimization tasks. build solutions and create impact. leverage ml to uncover patterns and trends. communicate complex findings in a digestible manner. strive for excellence and make a difference.\n\n\n“The only way to do great work is to love what you do.”"
   },
   {
     "objectID": "posts/welcome/index.html",
@@ -226,7 +226,7 @@
   {
     "objectID": "visuals.html",
     "href": "visuals.html",
-    "title": "Projects",
+    "title": "Visualizations",
     "section": "",
     "text": "Top FIFA national teams over the years\n\n\n\npython\n\n\nMatplotlib\n\n\n\n\n\n\n\nArnab Das\n\n\nApr 25, 2024\n\n\n\n\n\n\n\n\n\n\n\n\nYear-wise Percentage of Internet Users Globally\n\n\n\npython\n\n\nplotly\n\n\n\n\n\n\n\nArnab Das\n\n\nJan 4, 2024\n\n\n\n\n\n\n\n\nNo matching items"
   },

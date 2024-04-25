@@ -20,10 +20,12 @@ about:
       href: Resume_AD.pdf
 ---
 
-**Data lover 📊, statistics enthusiast 📈, Python 🐍 and R 📊 enthusiast.**
+**numbers guy 📊 \| math & stats nut 📈 \| Python 🐍\| R 📊 \| Optimization ⚙️ \|**
 
-📊 Passionate about data and statistics, I dive deep into the world of analysis and love uncovering insights. With a keen interest in machine learning 🤖, Python 🐍, and R, I'm always exploring new ways to extract meaning from data. 
+a passion for numbers and data-driven insights. python and r for mathematical modeling, statistical analysis, and optimization tasks. build solutions and create impact. leverage ml to uncover patterns and trends. communicate complex findings in a digestible manner. strive for excellence and make a difference.
+
 <center>
-####  "The only way to do great work is to love what you do.*"
-</center>
 
+#### *"The only way to do great work is to love what you do."*
+
+</center>

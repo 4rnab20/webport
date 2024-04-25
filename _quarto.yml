@@ -5,9 +5,9 @@ website:
   title: "Arnab Das"
   navbar:
     left:
-      - text: Posts
+      - text: Projects
         href: project.qmd
-      - text: Projects 
+      - text: Visualizations 
         href: visuals.qmd
     right:
       - icon: github

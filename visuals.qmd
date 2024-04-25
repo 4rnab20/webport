@@ -1,5 +1,5 @@
 ---
-title: "Projects"
+title: "Visualizations"
 image: FIFA_world.gif
 listing:
   categories: true
