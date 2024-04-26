@@ -1,0 +1,17 @@
+[
+  {
+    "listing": "/visuals.html",
+    "items": [
+      "/visuals/iu/index.html",
+      "/visuals/prace/index.html"
+    ]
+  },
+  {
+    "listing": "/project.html",
+    "items": [
+      "/posts/diabetes/index.html",
+      "/posts/flagmodel/index.html",
+      "/posts/pulsarstars/index.html"
+    ]
+  }
+]
