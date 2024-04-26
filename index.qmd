@@ -1,10 +1,9 @@
 ---
-title: "Arnab Das"
 image: profile.gif
 resources:
     - Resume_AD.pdf
 about:
-  template: jolla
+  template: trestles
   links:
 #    - icon: twitter
 #      text: Twitter
@@ -15,17 +14,15 @@ about:
     - icon: github
       text: Github
       href: https://github.com/4rnab20
-    - icon: resume
-      text: Resume
-      href: Resume_AD.pdf
 ---
-
-**numbers guy 📊 \| math & stats nut 📈 \| Python 🐍\| R 📊 \| Optimization ⚙️ \|**
+# Arnab Das
+<div style="text-align: justified"> 
+**numbers guy 📊 \| math & stats nut 📈 \| Python 🐍\| R 📊 \| optimization ⚙️ \|**
 
 a passion for numbers and data-driven insights. python and r for mathematical modeling, statistical analysis, and optimization tasks. build solutions and create impact. leverage ml to uncover patterns and trends. communicate complex findings in a digestible manner. strive for excellence and make a difference.
 
-<center>
 
 #### *"The only way to do great work is to love what you do."*
+</div>
 
-</center>
+

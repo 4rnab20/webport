@@ -9,12 +9,13 @@ output:
 format:
   html:
     code-fold: true
-    code-summary: "Show the code"
+    code-summary: Show the code
     code-tools: true
     code-block-bg: true
-    code-block-border-left: "#31BAE9"
+    code-block-border-left: '#31BAE9'
     toc: true
     toc-depth: 3
+title-block-banner: true
 ---
 
 ## Introduction:
