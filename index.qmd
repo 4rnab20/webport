@@ -14,10 +14,17 @@ about:
     - icon: github
       text: Github
       href: https://github.com/4rnab20
+    - icon: envelope
+      text: Email
+      href: mailto:dasarnab26@gmail.com
+    - icon: phone
+      text: Phone
+      href: tel:2365134280
+    
 ---
 # Arnab Das
 <div style="text-align: justified"> 
-**numbers guy 📊 \| math & stats nut 📈 \| Python 🐍\| R 📊 \| optimization ⚙️ \|**
+**| numbers guy 📊 \| math & stats nut 📈 \| Python 🐍\| R 📊 \| optimization ⚙️ |**
 
 a passion for numbers and data-driven insights. python and r for mathematical modeling, statistical analysis, and optimization tasks. build solutions and create impact. leverage ml to uncover patterns and trends. communicate complex findings in a digestible manner. strive for excellence and make a difference.
 
