@@ -13,6 +13,6 @@ title-block-banner: true
 
 ---
 format:
-  htmgl:
+  html:
     toc: true
 ---

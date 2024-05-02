@@ -11,11 +11,6 @@ website:
         href: project.qmd
       - text: Visualizations 
         href: visuals.qmd
-    right:
-      - text: Resume
-        href: Resume_AD.html
-      - icon: github
-        href: https://github.com/4rnab20
   
 format:
   html:
