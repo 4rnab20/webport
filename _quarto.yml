@@ -11,7 +11,9 @@ website:
         href: project.qmd
       - text: Visualizations 
         href: visuals.qmd
-  
+    right: 
+      - icon: github
+        href: https://github.com/4rnab20
 format:
   html:
     theme: 
