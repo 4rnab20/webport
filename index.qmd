@@ -1,9 +1,9 @@
 ---
-image: profile.gif
+image: profile.png
 resources:
     - Resume_AD.pdf
 about:
-  template: trestles
+  template: jolla
   links:
     - icon: github
       text: Github
