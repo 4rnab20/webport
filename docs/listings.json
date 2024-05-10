@@ -9,6 +9,7 @@
   {
     "listing": "/project.html",
     "items": [
+      "/posts/dashboard/index.html",
       "/posts/diabetes/index.html",
       "/posts/flagmodel/index.html",
       "/posts/pulsarstars/index.html"

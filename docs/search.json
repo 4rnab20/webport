@@ -105,6 +105,13 @@
     "text": "References:\n\nRelated Study 1: Joshi, Ram D, and Chandra K Dhakal. “Predicting Type 2 Diabetes Using Logistic Regression and Machine Learning Approaches.” International Journal of Environmental Research and Public Health, U.S. National Library of Medicine, 9 July 2021, www.ncbi.nlm.nih.gov/pmc/articles/PMC8306487/.\nRelated Study 2: Chang, Victor, et al. “Pima Indians Diabetes Mellitus Classification Based on Machine Learning (ML) Algorithms.” Neural Computing & Applications, U.S. National Library of Medicine, 24 Mar. 2022, www.ncbi.nlm.nih.gov/pmc/articles/PMC8943493/.\nData source: National Institute of Diabetes and Digestive and Kidney Diseases. “Predict Diabetes.” Kaggle, 9 Nov. 2022, www.kaggle.com/datasets/whenamancodes/predict-diabities?resource=download.\nMore Details on data: “Pima Indians Diabetes Database - Dataset by Data-Society.” Data.World, 13 Dec. 2016, www.data.world/data-society/pima-indians-diabetes-database.\nROC in health data: Nahm, Francis Sahngun. “Receiver Operating Characteristic Curve: Overview and Practical Use for Clinicians.” Korean Journal of Anesthesiology, U.S. National Library of Medicine, Feb. 2022, www.ncbi.nlm.nih.gov/pmc/articles/PMC8831439/."
   },
   {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Arnab Das",
+    "section": "",
+    "text": "Arnab Das\n\n| numbers guy 📊 | math & stats nut 📈 | Python 🐍| R 📊 | optimization ⚙️ |\na passion for numbers and data-driven insights. python and R for mathematical modeling, statistical analysis and optimization tasks. building solutions and creating impact. leveraging ml to uncover patterns and trends. communicating complex findings in a digestible manner.\n\n“The only way to do great work is to love what you do.”"
+  },
+  {
     "objectID": "hc.html",
     "href": "hc.html",
     "title": "Predictive model to flag potential cancellations",
@@ -140,11 +147,25 @@
     "text": "Results:\n\nmodel.fit(new_train,y_train)\nnew_test = preprocessor.transform(X_test)\nnew_test = rfe_cv.transform(new_test)\n\naccuracy_testscore = model.score(new_test, y_test)\nf1_testscore = f1_score(y_test, model.predict(new_test))\nprint(\"Accuracy: \" + str(accuracy_testscore))\nprint(\"F1 score: \" + str(f1_testscore))\n\nAccuracy: 0.8827636898199192\nF1 score: 0.8212885154061624\n\n\nFrom the train and test scores above: * It has good test scores meaning it effectively classifies the data into their respective classes. * The test scores agree with the validation scores from before. * The test values are overfit. The predictions have high variance among them but low bias. * The difference in train/test value means the model might not generalize well to new unseen data.\n\nModel caveats:\nThroughout the project, the models created and methods used might not be best and the following results might not be perfect. Having said that, the following caveats can be inferred:\n\nGeneralizability: The significant difference between train accuracy/F1 score and test F1 accuracy/F1 score means that the model could be overfitting the training data. As a result, it might not generalize well to unseen data. This is mainly due to the fact we are using an ensemble model and other steps we took to optimize it such as RFECV, random search.\nSuboptimal search results: Using grid search instead of random search could have provided better performing parameters since it is an exhaustive search. The hyperparameters found might be suboptimal compared to what we could have found using grid search.\nTime series relationships: The relationship between the features and booking_status can change across the years/different dates. Since we did not consider time series analysis, we might have missed underlying patterns in the data, resulting in suboptimal model performance.\nComplexity: Since we used an ensemble model, the model is complex and requires high computational power. Therefore, it is harder to understand or interpret the model, and its training time is also higher than usual.\nNon-important features: RFECV might not have identified all the redundant features, which can increase model complexity and negatively impact the its performance.\n\nOverall, the model still works as an useful tool to assist the hotel owners in better understanding whether a customer will honor the reservation or cancel it. Although the model is far from perfect, it can always be improved or further optimized. Training the model with new data sets occasionally will also improve the models performance in making informed decisions about managing hotel reservations."
   },
   {
-    "objectID": "index.html",
-    "href": "index.html",
-    "title": "Arnab Das",
+    "objectID": "posts/dashboard/index.html",
+    "href": "posts/dashboard/index.html",
+    "title": "📈 US Sales Dashboard",
     "section": "",
-    "text": "Arnab Das\n\n| numbers guy 📊 | math & stats nut 📈 | Python 🐍| R 📊 | optimization ⚙️ |\na passion for numbers and data-driven insights. python and R for mathematical modeling, statistical analysis and optimization tasks. building solutions and creating impact. leveraging ml to uncover patterns and trends. communicating complex findings in a digestible manner.\n\n“The only way to do great work is to love what you do.”"
+    "text": "The dashboard visualizes US sales data using Plotly graphs. It provides insights into sales trends across different states and product categories. The repo: LINK  ## Features - Interactive Plotly graphs for visualizing sales data. - Customizable settings to adjust the display of graphs."
+  },
+  {
+    "objectID": "posts/dashboard/index.html#overview",
+    "href": "posts/dashboard/index.html#overview",
+    "title": "📈 US Sales Dashboard",
+    "section": "",
+    "text": "The dashboard visualizes US sales data using Plotly graphs. It provides insights into sales trends across different states and product categories. The repo: LINK  ## Features - Interactive Plotly graphs for visualizing sales data. - Customizable settings to adjust the display of graphs."
+  },
+  {
+    "objectID": "posts/dashboard/index.html#getting-started",
+    "href": "posts/dashboard/index.html#getting-started",
+    "title": "📈 US Sales Dashboard",
+    "section": "Getting Started",
+    "text": "Getting Started\n\nPrerequisites\nMake sure you have Python installed on your system. You can download Python from here.\n\n\nInstallation\n\nClone the repository: bash git clone https://github.com/4rnab20/Python-Dashboard\nNavigate to the project directory: bash cd Python-Dashboard\n\n\n\nUsage\n\nRun the Streamlit app: bash streamlit run dashb.py\nOpen the provided URL in your web browser to access the dashboard."
   },
   {
     "objectID": "posts/flagmodel/index.html",
@@ -186,7 +207,7 @@
     "href": "project.html",
     "title": "Projects",
     "section": "",
-    "text": "Diabetes Prediction Modeling\n\n\n\n\n\n\nR\n\n\n\n\n\n\n\n\n\nApr 21, 2024\n\n\nArnab Das\n\n\n\n\n\n\n\n\n\n\n\n\nModeling for flagging potential cancellations\n\n\n\n\n\n\npython\n\n\n\n\n\n\n\n\n\nMay 4, 2023\n\n\nArnab Das\n\n\n\n\n\n\n\n\n\n\n\n\nPulsar Star Classification\n\n\n\n\n\n\nR\n\n\n\n\n\n\n\n\n\nMay 1, 2021\n\n\nArnab Das\n\n\n\n\n\n\nNo matching items"
+    "text": "📈 US Sales Dashboard\n\n\n\n\n\n\nPython\n\n\nStreamlit\n\n\nPlotly\n\n\n\n\n\n\n\n\n\nMay 1, 2024\n\n\nArnab Das\n\n\n\n\n\n\n\n\n\n\n\n\nDiabetes Prediction Modeling\n\n\n\n\n\n\nR\n\n\n\n\n\n\n\n\n\nApr 21, 2024\n\n\nArnab Das\n\n\n\n\n\n\n\n\n\n\n\n\nModeling for flagging potential cancellations\n\n\n\n\n\n\npython\n\n\n\n\n\n\n\n\n\nMay 4, 2023\n\n\nArnab Das\n\n\n\n\n\n\n\n\n\n\n\n\nPulsar Star Classification\n\n\n\n\n\n\nR\n\n\n\n\n\n\n\n\n\nMay 1, 2021\n\n\nArnab Das\n\n\n\n\n\n\nNo matching items"
   },
   {
     "objectID": "visuals/prace/index.html",
