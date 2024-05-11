@@ -1,7 +1,8 @@
   pre {
     background-color: #262730; /* Dark gray */
-    color: white; /* White text for contrast */
+    color: #d5dae5; /* White text for contrast */
   }
-  .navbar {
-    color: #ffffff; /* Change to the color you desire */
+  ::selection {
+  color: #0e1117;
+  background: #d6d6d6;
   }
