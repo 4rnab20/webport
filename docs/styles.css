@@ -1,6 +1,7 @@
-  /* Change the background color of code blocks for dark theme */
   pre {
-    background-color: #333; /* Dark gray */
+    background-color: #262730; /* Dark gray */
     color: white; /* White text for contrast */
   }
-}
+  .navbar {
+    color: #ffffff; /* Change to the color you desire */
+  }
